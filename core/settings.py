@@ -10,8 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from datetime import timedelta
+import os
 from pathlib import Path
-
+from dotenv import load_dotenv
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,8 +28,8 @@ SECRET_KEY = 'django-insecure-r&nb2s$1ic(o11vc(1e^zhwloccibl!%k0)v1v(xxag4@7@h3=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["*"]
+AUTH_USER_MODEL = "rest_auth.User"
 
 # Application definition
 
@@ -37,7 +40,40 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
+    # Generate Swagger/OpenAPI 3.0 specifications from a Django Rest Framework API.
+    # Documentation: https://drf-spectacular.readthedocs.io/
+    'drf_spectacular',
+    # Integrated set of Django applications addressing authentication,
+    # registration, account management as well as 3rd party (social) account authentication.
+    'allauth',
+    'allauth.account',
+    # Rest auth provider for allauth
+    'dj_rest_auth',
+    # A Django App that adds Cross-Origin Resource Sharing (CORS) headers to responses.
+    # This allows in-browser requests to your Django application from other origins.
+    # Documentation: https://pypi.org/project/django-cors-headers/
+    'corsheaders',
+    # rules is a tiny but powerful app providing object-level permissions to Django, 
+    # without requiring a database. At its core
+    # , it is a generic framework for building rule-based systems, 
+    # similar to decision trees. It can also be used as a standalone library 
+    # in other contexts and frameworks.
+    'rules',
+    # Custom apps
+    'api',
+    'rest_auth'
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'rules.permissions.ObjectPermissionBackend',
+    # Needed to login by username in Django admin, regardless of `allauth`
+    "django.contrib.auth.backends.ModelBackend",
+    # `allauth` specific authentication methods, such as login by e-mail
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -70,54 +106,165 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
+# CORS SETTINGS
+CORS_ORIGIN_ALLOW_ALL = True
+#CORS_ALLOWED_ORIGINS = ()
+#CORS_ALLOW_CREDENTIALS = True # разрешает использование куков при кросс-доменных запросах
+
+# REST FRAMEWORK SETTINGS
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_SCHEMA_CLASS': "drf_spectacular.openapi.AutoSchema",
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    # 'EXCEPTION_HANDLER': 'picture.utils.custom_exception_handler'
+}
+
+REST_USE_JWT = True
+
+JWT_AUTH_COOKIE = 'remzona-access'
+JWT_AUTH_REFRESH_COOKIE = 'remzona-refresh'
+
+# SIMPLE_JWT SETTINGS
+if DEBUG:
+    access_token_lifetime = timedelta(days=5)
+else:
+    access_token_lifetime = timedelta(minutes=15)
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': access_token_lifetime,
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'UPDATE_LAST_LOGIN': False,
+
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    'LEEWAY': 0,
+
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+
+    'JTI_CLAIM': 'jti',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Remzona-CRM API',
+    'VERSION': '0.0.1',
+    'SERVE_INCLUDE_SCHEMA': False, # hide schema endpoint
+    'SWAGGER_UI_SETTINGS': {
+        'defaultModelsExpandDepth': -1,
+        'filter': True,
+    },
+    'DISABLE_ERRORS_AND_WARNINGS': True,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SORT_OPERATIONS': False
+}
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
+# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv("POSTGRES_DB"),
+        'HOST': os.getenv("POSTGRES_HOST"),
+        'USER': os.getenv("POSTGRES_USER"),
+        'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
+        'PORT': os.getenv("POSTGRES_PORT", 5432),
+        'ATOMIC_REQUESTS': True  # помним об исключениях
     }
 }
 
 
 # Password validation
-# https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+if not DEBUG:
+    AUTH_PASSWORD_VALIDATORS = [
+        {
+            'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+            'OPTIONS': {
+                'min_length': 7
+            }
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        },
+    ]
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/4.0/topics/i18n/
+# https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
+
+USE_L10N = True
 
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.0/howto/static-files/
+# https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+# if DEBUG:
+#     MEDIA_URL = '/media/'
+#     STATICFILES_DIRS = [
+#         os.path.join(BASE_DIR, 'static')
+#     ]
+#     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
+# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+API_VERSION = 'v1'
+API_URL = 'api/%s/' % API_VERSION
+
+
+# AWS SETTINGS
+
+# AWS_ACCESS_KEY_ID=os.getenv("AWS_ACCESS_KEY_ID")
+# AWS_SECRET_ACCESS_KEY=os.getenv("AWS_SECRET_ACCESS_KEY")
+
+# # S3
+# AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME", "cloud-shutterstock-bucket")
+# AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+# AWS_S3_OBJECT_PARAMETERS = {
+#     'CacheControl': 'max-age=86400',
+# }

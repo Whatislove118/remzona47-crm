@@ -10,8 +10,21 @@ Django = "4.0.3"
 djangorestframework = "^3.13.1"
 psycopg2 = "^2.9.3"
 python-dotenv = "^0.19.2"
+drf-spectacular = "^0.22.0"
+djangorestframework-simplejwt = "^5.1.0"
+django-filter = "^21.1"
+django-cors-headers = "^3.11.0"
+django-allauth = "^0.50.0"
+dj-rest-auth = "^2.2.4"
+rules = "^3.3"
+
 
 [tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+autoflake = "^1.4"
+mypy = "^0.941"
+black = "^22.1.0"
+isort = "^5.10.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

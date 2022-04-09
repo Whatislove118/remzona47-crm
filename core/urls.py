@@ -27,6 +27,5 @@ urlpatterns = [
     path(f'{settings.API_URL}redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('auth/', include('rest_auth.urls')),
     path(f'{settings.API_URL}', include('api.urls')),
-    path('', RedirectView.as_view(url='api/swagger/'), name='socialaccount_connections'),
-    path('', RedirectView.as_view(url='api/swagger/'), name='socialaccount_signup'),
+    path('', RedirectView.as_view(url=f'{settings.API_URL}swagger/')),
 ]

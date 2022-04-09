@@ -1,11 +1,13 @@
 
 from django.urls import include, path
-from .views import CreateStaffViewSet
+from .views import CreateStaffViewSet, GroupViewSet
+from rest_framework.routers import SimpleRouter
 
 '''
     urlpatterns with excluded routes
 '''
-urlpatterns = [
-    path('', include('dj_rest_auth.urls')),
-    path('users/create/', CreateStaffViewSet.as_view({"post": "create"}))
-]
+router = SimpleRouter()
+router.register('staff', CreateStaffViewSet)
+router.register('groups', GroupViewSet)
+
+urlpatterns = router.get_urls()

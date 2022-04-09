@@ -25,7 +25,8 @@ urlpatterns = [
     path(f'{settings.API_URL}schema/', SpectacularAPIView.as_view(), name='schema'),
     path(f'{settings.API_URL}swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path(f'{settings.API_URL}redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    path('auth/', include('rest_auth.urls')),
+    path('auth/', include('dj_rest_auth.urls')),
+    path('users/', include('rest_auth.urls')),
     path(f'{settings.API_URL}', include('api.urls')),
     path('', RedirectView.as_view(url=f'{settings.API_URL}swagger/')),
 ]

@@ -17,7 +17,7 @@ class PositionManager(models.Manager):
     pass
 
 class Position(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, null=False, blank=False, unique=True)
     rate = models.PositiveIntegerField(default=0) # rate per hour 
     description = models.TextField()
@@ -29,7 +29,7 @@ class Position(models.Model):
         
 
 class Worklogs(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE)
     timeworked = models.DecimalField(max_digits=100, decimal_places=2)
     
@@ -37,7 +37,7 @@ class Worklogs(models.Model):
         db_table = "worklogs"
 
 class Car(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     model = models.ForeignKey("CarModel", null=False, blank=False, related_name="cars", on_delete=models.RESTRICT)
     vin = models.CharField(max_length=15, null=False, blank=False)
     plate_number = models.CharField(max_length=20, null=False, blank=False)
@@ -48,12 +48,12 @@ class Car(models.Model):
 
 
 class Brand(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, null=False, blank=False, unique=True)
 
 
 class CarModel(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     brand = models.ForeignKey("Brand", null=False, blank=False, related_name="models", on_delete=models.RESTRICT)
     name = name = models.CharField(max_length=100, null=False, blank=False)
 

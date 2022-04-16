@@ -23,6 +23,9 @@ class UserManager(UManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         return self._create_user(username, email, password, **extra_fields)
+    
+    def staff(self):
+        return self.get_queryset().filter(is_staff=True, is_superuser=False).all()
 
 
 class User(AbstractUser):
@@ -35,6 +38,9 @@ class User(AbstractUser):
     class Meta:
         db_table = 'users'
         
+    
+    def has_group(self, name):
+        return self.groups.filter(name=name).count() != 0 
 
 class Client(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)

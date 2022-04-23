@@ -36,7 +36,7 @@ class UserDetailsSerializer(DjUserDetailSerializer):
         if hasattr(UserModel, "groups"):
             extra_fields.append("groups")
         model = UserModel
-        fields = ('pk', *extra_fields)
+        fields = ('pk','is_superuser', *extra_fields)
         read_only_fields = ('email',)
 
 class StaffSerializer(serializers.ModelSerializer):

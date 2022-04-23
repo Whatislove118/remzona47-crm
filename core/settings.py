@@ -55,12 +55,9 @@ INSTALLED_APPS = [
     # This allows in-browser requests to your Django application from other origins.
     # Documentation: https://pypi.org/project/django-cors-headers/
     'corsheaders',
-    # rules is a tiny but powerful app providing object-level permissions to Django, 
-    # without requiring a database. At its core
-    # , it is a generic framework for building rule-based systems, 
-    # similar to decision trees. It can also be used as a standalone library 
-    # in other contexts and frameworks.
-    'rules',
+    # django-guardian is an implementation of object permissions for Django
+    # providing an extra authentication backend.
+    'guardian',
     # Custom apps
     'api',
     'rest_auth',
@@ -69,10 +66,10 @@ INSTALLED_APPS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'rules.permissions.ObjectPermissionBackend',
-    # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
-    # `allauth` specific authentication methods, such as login by e-mail
+    # Guardian object-permissions hook
+    "guardian.backends.ObjectPermissionBackend",
+    # Needed to login by username in Django admin, regardless of `allauth`
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 

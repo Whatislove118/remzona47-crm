@@ -1,6 +1,8 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import UserManager as UManager, AbstractUser
+from django.dispatch import receiver
+from django.db.models.signals import pre_save
 
 from rest_auth.helpers import validate_credentials
 
@@ -41,6 +43,12 @@ class User(AbstractUser):
     
     def has_group(self, name):
         return self.groups.filter(name=name).count() != 0 
+    
+    def save(self, *args, **kwargs) -> None:
+        password = kwargs.pop("password")
+        if password:
+            self.set_password(password)
+        super().save(*args, **kwargs)
 
 class Client(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)
@@ -51,3 +59,17 @@ class Client(models.Model):
     
     class Meta:
         db_table = 'clients'
+
+
+@receiver(pre_save, sender=User)
+def user_updated(sender, **kwargs):
+    user = kwargs.get('instance', None)
+    if user:
+        new_password = user.password
+        try:
+            old_password = User.objects.get(pk=user.pk).password
+        except User.DoesNotExist:
+            old_password = None
+        if new_password != old_password:
+            user.set_password(new_password)
+    

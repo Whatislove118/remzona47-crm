@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model, models
 from core import permissions
 from rest_framework.viewsets import ModelViewSet
-from .serializers import StaffCreateSerializer, StaffSerializer, GroupSerializer
+from .serializers import StaffCreateSerializer, StaffDetailsSerializer, GroupSerializer
 from rest_framework.decorators import action
 
 
@@ -11,7 +11,7 @@ class CreateStaffViewSet(ModelViewSet):
     model = User
     queryset = User.objects.staff()
     permission_classes = [permissions.IsAdminUser, ]
-    serializer_class = StaffSerializer
+    serializer_class = StaffDetailsSerializer
     
     def get_serializer_class(self):
         if self.action == 'create':

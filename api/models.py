@@ -36,6 +36,7 @@ class Worklogs(models.Model):
     class Meta:
         db_table = "worklogs"
 
+
 class Car(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     model = models.ForeignKey("CarModel", null=False, blank=False, related_name="cars", on_delete=models.RESTRICT)

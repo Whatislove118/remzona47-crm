@@ -1,3 +1,4 @@
+from datetime import datetime
 import uuid
 from django.db import models
 from core import utils
@@ -13,9 +14,9 @@ class JobStatus(models.Choices):
 
 class JobManager(models.Manager):
     
-    def jobs_by_month(self, month: str | int):
-        current_month = utils.month_by_number(month)
-        next_month = utils.month_by_number(month + 1)
+    def jobs_by_month(self, start_date, end_date):
+        # current_month = utils.month_by_number(month)
+        # next_month = utils.month_by_number(month + 1)
         return self.get_queryset().filter()
         
             

@@ -3,7 +3,9 @@ from .models import Position, Worklogs
 from django.contrib.auth import get_user_model
 
 
+
 User = get_user_model
+
 class PositionSerializer(serializers.ModelSerializer):
     
     class Meta:

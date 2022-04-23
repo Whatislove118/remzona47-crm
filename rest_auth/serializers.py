@@ -39,7 +39,7 @@ class UserDetailsSerializer(DjUserDetailSerializer):
         fields = ('pk','is_superuser', *extra_fields)
         read_only_fields = ('email',)
 
-class StaffSerializer(serializers.ModelSerializer):
+class StaffDetailsSerializer(serializers.ModelSerializer):
     groups = GroupSerializer(many=True, read_only=True)
     position = PositionSerializer(many=False, read_only=True)
     
@@ -47,10 +47,11 @@ class StaffSerializer(serializers.ModelSerializer):
         model = UserModel
         exclude = ('is_superuser', 'is_staff', 'last_login', 'date_joined', 'user_permissions', 'is_active')
         read_only_fields = ('id', 'salary')
-        
+        extra_kwargs = {'password': {'write_only': True}}
 
 
-class StaffCreateSerializer(StaffSerializer):
+
+class StaffCreateSerializer(StaffDetailsSerializer):
     groups = serializers.SlugRelatedField(
         many=True,
         slug_field="name",
@@ -63,7 +64,7 @@ class StaffCreateSerializer(StaffSerializer):
         queryset=Position.objects.all()
     )
     
-    class Meta(StaffSerializer.Meta):
+    class Meta(StaffDetailsSerializer.Meta):
         pass
         
     

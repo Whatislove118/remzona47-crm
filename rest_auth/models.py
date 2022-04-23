@@ -43,12 +43,7 @@ class User(AbstractUser):
     
     def has_group(self, name):
         return self.groups.filter(name=name).count() != 0 
-    
-    def save(self, *args, **kwargs) -> None:
-        password = kwargs.pop("password")
-        if password:
-            self.set_password(password)
-        super().save(*args, **kwargs)
+
 
 class Client(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)

@@ -1,0 +1,62 @@
+import uuid
+from django.db import models
+from core import utils
+
+# Create your models here.
+
+class JobStatus(models.Choices):
+    opened = "Открыта"
+    in_progress = "В работе"
+    resolved = "Выполнена"
+    postpone = "Отложена"
+    
+
+class JobManager(models.Manager):
+    
+    def jobs_by_month(self, month: str | int):
+        current_month = utils.month_by_number(month)
+        next_month = utils.month_by_number(month + 1)
+        return self.get_queryset().filter()
+        
+            
+
+class Job(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    favour = models.ForeignKey(
+        "work_process.Favour",
+        related_name="jobs", 
+        blank=False,
+        null=False,
+        on_delete=models.RestrictedError
+    ) 
+    master = models.ForeignKey(
+        "rest_auth.User",
+        related_name="jobs",
+        blank=False,
+        null=False,
+        on_delete=models.RestrictedError
+    )
+    description = models.TextField()
+    started_at = models.DateTimeField(null=False, blank=False)
+    ended_at = models.DateTimeField(null=False, blank=False)
+    
+    client = None
+    status = models.CharField(
+        max_length=100,
+        choices=JobStatus.choices,
+        default=JobStatus.opened
+    )
+    
+    objects = JobManager()
+    
+    class Meta:
+        db_table = "jobs"
+        
+
+class Favour(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=100, decimal_places=2)
+    
+    class Meta:
+        db_table = "favours"

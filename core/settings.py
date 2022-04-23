@@ -63,7 +63,9 @@ INSTALLED_APPS = [
     'rules',
     # Custom apps
     'api',
-    'rest_auth'
+    'rest_auth',
+    'api.roster_calendar',
+    'api.work_process'
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -139,6 +141,10 @@ if DEBUG:
     access_token_lifetime = timedelta(days=5)
 else:
     access_token_lifetime = timedelta(minutes=15)
+
+REST_AUTH_SERIALIZERS = {
+    "USER_DETAILS_SERIALIZER": "rest_auth.serializers.UserDetailsSerializer"
+}
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': access_token_lifetime,

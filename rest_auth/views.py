@@ -8,7 +8,8 @@ from .serializers import (
     StaffDetailsSerializer,
     GroupSerializer,
     PositionSerializer,
-    WorklogSerializer
+    WorklogDetailsSerializer,
+    WorklogCreateSerializer,
 )
 from rest_framework.decorators import action
 
@@ -52,8 +53,12 @@ class WorklogViewSet(ModelViewSet):
     model = Worklogs
     queryset = Worklogs.objects.all()
     permission_classes = [permissions.IsAuthenticated,]
-    serializer_class = WorklogSerializer
+    serializer_class = WorklogDetailsSerializer
     
+    def get_serializer_class(self):
+        if self.action == 'create':
+            self.serializer_class = WorklogCreateSerializer
+        return super().get_serializer_class()
     
     def perform_create(self, serializer):
         user = self.request.user
@@ -62,4 +67,5 @@ class WorklogViewSet(ModelViewSet):
             user_id = self.request.user.id
         if user.has_group(name="master-regular") and user_id != user.id:
             raise serializers.ValidationError("Вы не можете логировать время за другого человека.")
-        serializer.save(user_id=user_id)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user_id=user_id)

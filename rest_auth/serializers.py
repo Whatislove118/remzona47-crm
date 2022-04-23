@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from dj_rest_auth.serializers import UserDetailsSerializer as DjUserDetailSerializer
-
+import re
 from rest_auth.models import Position, Worklogs
 
 
@@ -48,14 +48,22 @@ class PositionSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', )
 
 
-class WorklogSerializer(serializers.ModelSerializer):
-    
+class WorklogDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Worklogs
         fields = '__all__'
         read_only_fields = ('id', )
         extra_kwargs = {"user": {"required": False}}
+
+class WorklogCreateSerializer(WorklogDetailsSerializer):
+    timeworked = serializers.CharField()
+    
+    # def validate_timeworked(self, value):
+    #     pattern = r"([1-9]+[h|m])+"
         
+    
+    class Meta(WorklogDetailsSerializer.Meta):
+        pass
         
 class StaffDetailsSerializer(serializers.ModelSerializer):
     groups = GroupSerializer(many=True, read_only=True)

@@ -12,8 +12,11 @@ def validate_credentials(username, email, password):
     if password is None:
         raise AttributeError('Password shouldn\'t be None')
     password_validation.validate_password(password)
-    
-    
+
+def parse_log_time(time: str):
+    pass
+
+
 @receiver(post_save, sender=settings.AUTH_USER_MODEL, dispatch_uid='post_save_user')
 def post_save_user(sender, instance, created, **kwargs):
     pass

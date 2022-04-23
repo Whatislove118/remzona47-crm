@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.work_process.models import Job
+from api.apps.work_process.models import Job
 
 class JobSerializer(serializers.ModelSerializer):
     

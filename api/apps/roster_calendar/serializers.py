@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.work_process.serializers import JobSerializer
+from api.apps.work_process.serializers import JobSerializer
 
 
 class DaySerializer(serializers.Serializer):

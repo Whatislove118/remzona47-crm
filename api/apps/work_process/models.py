@@ -31,7 +31,7 @@ class Job(models.Model):
         on_delete=models.RestrictedError
     ) 
     master = models.ForeignKey(
-        "rest_auth.User",
+        "users.User",
         related_name="jobs",
         blank=False,
         null=False,

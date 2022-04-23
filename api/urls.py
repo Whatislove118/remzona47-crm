@@ -1,10 +1,9 @@
 from django.urls import include, path
 from rest_framework import routers
-from .views import PositionViewSet, WorklogViewSet, health
+from .views import health
 
 router = routers.SimpleRouter()
-router.register(r'positions', PositionViewSet)
-router.register(r'worklogs', WorklogViewSet)
+
 
 urlpatterns = [
     path('', include(router.urls)),

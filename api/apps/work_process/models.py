@@ -2,8 +2,11 @@ from datetime import datetime
 import uuid
 from django.db import models
 from core import utils
+from django.contrib.auth import get_user_model
 
 # Create your models here.
+
+User = get_user_model()
 
 class JobStatus(models.Choices):
     opened = "Открыта"
@@ -19,19 +22,26 @@ class JobManager(models.Manager):
         # next_month = utils.month_by_number(month + 1)
         return self.get_queryset().filter()
         
-            
+
+class Favour(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=100, decimal_places=2)
+    
+    class Meta:
+        db_table = "favours"
 
 class Job(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     favour = models.ForeignKey(
-        "work_process.Favour",
+        Favour,
         related_name="jobs", 
         blank=False,
         null=False,
         on_delete=models.RestrictedError
     ) 
     master = models.ForeignKey(
-        "users.User",
+        User,
         related_name="jobs",
         blank=False,
         null=False,
@@ -54,10 +64,3 @@ class Job(models.Model):
         db_table = "jobs"
         
 
-class Favour(models.Model):
-    name = models.CharField(max_length=255, unique=True)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=100, decimal_places=2)
-    
-    class Meta:
-        db_table = "favours"

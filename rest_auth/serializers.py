@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from api.serializers import PositionSerializer
-from api.models import Position
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from dj_rest_auth.serializers import UserDetailsSerializer as DjUserDetailSerializer
+
+from rest_auth.models import Position, Worklogs
 
 
 UserModel = get_user_model()
@@ -39,6 +39,24 @@ class UserDetailsSerializer(DjUserDetailSerializer):
         fields = ('pk','is_superuser', *extra_fields)
         read_only_fields = ('email',)
 
+
+class PositionSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Position
+        fields = '__all__'
+        read_only_fields = ('id', )
+
+
+class WorklogSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Worklogs
+        fields = '__all__'
+        read_only_fields = ('id', )
+        extra_kwargs = {"user": {"required": False}}
+        
+        
 class StaffDetailsSerializer(serializers.ModelSerializer):
     groups = GroupSerializer(many=True, read_only=True)
     position = PositionSerializer(many=False, read_only=True)
@@ -73,10 +91,5 @@ class StaffCreateSerializer(StaffDetailsSerializer):
         if not validated_data.get('groups'):
             validated_data['groups'] = [Group.objects.get(name="master-regular")]
         return UserModel.objects.create_user(**validated_data)
-
-    
-
-
-
 
 

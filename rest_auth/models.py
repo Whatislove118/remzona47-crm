@@ -1,10 +1,12 @@
 import uuid
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import UserManager as UManager, AbstractUser
 from django.dispatch import receiver
 from django.db.models.signals import pre_save
 
 from rest_auth.helpers import validate_credentials
+
 
 class UserManager(UManager):
 
@@ -34,7 +36,7 @@ class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)
     patronomic = models.CharField(max_length=15, null=True, blank=True)
     salary = models.DecimalField(default=0.00, decimal_places=2, max_digits=10)
-    position = models.ForeignKey('api.Position', related_name="users", null=True, blank=True, on_delete=models.RESTRICT)
+    position = models.ForeignKey('rest_auth.Position', related_name="users", null=True, blank=True, on_delete=models.RESTRICT)
         
     objects = UserManager()
     class Meta:
@@ -54,6 +56,30 @@ class Client(models.Model):
     
     class Meta:
         db_table = 'clients'
+
+
+class PositionManager(models.Manager):
+    pass
+
+class Position(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, null=False, blank=False, unique=True)
+    rate = models.PositiveIntegerField(default=0) # rate per hour 
+    description = models.TextField()
+    
+    objects = PositionManager()
+    
+    class Meta:
+        db_table = "positions"
+        
+
+class Worklogs(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE)
+    timeworked = models.DecimalField(max_digits=100, decimal_places=2)
+    
+    class Meta:
+        db_table = "worklogs"
 
 
 @receiver(pre_save, sender=User)

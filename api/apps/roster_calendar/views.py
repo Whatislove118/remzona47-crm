@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from .serializers import MonthSerializer
-from api.work_process.models import Job
+from api.apps.work_process.models import Job
 from core import permissions, utils
 # Create your views here.
 

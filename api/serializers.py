@@ -1,26 +1,11 @@
 from rest_framework import serializers
-from .models import Position, Worklogs
+
 from django.contrib.auth import get_user_model
 
 
 
 User = get_user_model
 
-class PositionSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Position
-        fields = '__all__'
-        read_only_fields = ('id', )
-
-
-class WorklogSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Worklogs
-        fields = '__all__'
-        read_only_fields = ('id', )
-        extra_kwargs = {"user": {"required": False}}
 
 
 # class MasterSerializer(serializers.ModelSerializer):

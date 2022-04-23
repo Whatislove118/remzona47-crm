@@ -61,8 +61,8 @@ INSTALLED_APPS = [
     # Custom apps
     'api',
     'rest_auth',
-    'api.roster_calendar',
-    'api.work_process'
+    'api.apps.roster_calendar',
+    'api.apps.work_process'
 ]
 
 AUTHENTICATION_BACKENDS = (

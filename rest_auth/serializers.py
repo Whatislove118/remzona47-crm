@@ -47,33 +47,39 @@ class PositionSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id', )
 
+class WorklogCreateSerializer(serializers.ModelSerializer):
+    timeworked = serializers.CharField()
+    
+    # def validate_timeworked(self, value):
+    #     pattern = r"([1-9]+[h|m])+"
 
-class WorklogDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Worklogs
         fields = '__all__'
         read_only_fields = ('id', )
         extra_kwargs = {"user": {"required": False}}
 
-class WorklogCreateSerializer(WorklogDetailsSerializer):
-    timeworked = serializers.CharField()
-    
-    # def validate_timeworked(self, value):
-    #     pattern = r"([1-9]+[h|m])+"
-        
-    
-    class Meta(WorklogDetailsSerializer.Meta):
-        pass
-        
+
+class WorklogDetailsSerializer(WorklogCreateSerializer):
+    user = UserDetailsSerializer(many=False)
+
+    class Meta(WorklogCreateSerializer.Meta):
+        model = Worklogs
+        fields = '__all__'
+        read_only_fields = ('id', )
+        extra_kwargs = {"user": {"required": False}}
+
+
 class StaffDetailsSerializer(serializers.ModelSerializer):
     groups = GroupSerializer(many=True, read_only=True)
     position = PositionSerializer(many=False, read_only=True)
     
+
     class Meta:
         model = UserModel
-        exclude = ('is_superuser', 'is_staff', 'last_login', 'date_joined', 'user_permissions', 'is_active')
+        exclude = ('is_superuser', 'is_staff',  'last_login',  'date_joined', 'user_permissions', 'is_active', "password") 
         read_only_fields = ('id', 'salary')
-        extra_kwargs = {'password': {'write_only': True}}
+
 
 
 
@@ -91,7 +97,7 @@ class StaffCreateSerializer(StaffDetailsSerializer):
     )
     
     class Meta(StaffDetailsSerializer.Meta):
-        pass
+        exclude = ('is_superuser', 'is_staff',  'last_login',  'date_joined', 'user_permissions', 'is_active',)
         
     
     def create(self, validated_data: dict) -> UserModel:

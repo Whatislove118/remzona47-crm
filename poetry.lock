@@ -201,17 +201,6 @@ python-versions = ">=3.6"
 Django = ">=2.2"
 
 [[package]]
-name = "django-guardian"
-version = "2.4.0"
-description = "Implementation of per object permissions for Django."
-category = "main"
-optional = false
-python-versions = ">=3.5"
-
-[package.dependencies]
-Django = ">=2.2"
-
-[[package]]
 name = "djangorestframework"
 version = "3.13.1"
 description = "Web APIs for Django, made easy."
@@ -242,6 +231,18 @@ doc = ["Sphinx (>=1.6.5,<2)", "sphinx-rtd-theme (>=0.1.9)"]
 lint = ["flake8", "pep8", "isort"]
 python-jose = ["python-jose (==3.3.0)"]
 test = ["cryptography", "pytest-cov", "pytest-django", "pytest-xdist", "pytest", "tox"]
+
+[[package]]
+name = "drf-access-policy"
+version = "1.1.0"
+description = "Declarative access policies/permissions modeled after AWS' IAM policies."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+djangorestframework = "*"
+pyparsing = "*"
 
 [[package]]
 name = "drf-spectacular"
@@ -453,6 +454,17 @@ docs = ["sphinx", "sphinx-rtd-theme", "zope.interface"]
 tests = ["pytest (>=6.0.0,<7.0.0)", "coverage[toml] (==5.0.4)"]
 
 [[package]]
+name = "pyparsing"
+version = "3.0.8"
+description = "pyparsing module - Classes and methods to define and execute parsing grammars"
+category = "main"
+optional = false
+python-versions = ">=3.6.8"
+
+[package.extras]
+diagrams = ["railroad-diagrams", "jinja2"]
+
+[[package]]
 name = "pyrsistent"
 version = "0.18.1"
 description = "Persistent/Functional/Immutable data structures"
@@ -591,7 +603,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "eb085c8038321a93898d2959ae743455a9e6513cc30beb62b32d1d91ce25e100"
+content-hash = "290b025a12ea08028fb227eaa2293b71dc9fdfabae6e80531f64781c4b5cc299"
 
 [metadata.files]
 asgiref = [
@@ -742,10 +754,6 @@ django-filter = [
     {file = "django-filter-21.1.tar.gz", hash = "sha256:632a251fa8f1aadb4b8cceff932bb52fe2f826dd7dfe7f3eac40e5c463d6836e"},
     {file = "django_filter-21.1-py3-none-any.whl", hash = "sha256:f4a6737a30104c98d2e2a5fb93043f36dd7978e0c7ddc92f5998e85433ea5063"},
 ]
-django-guardian = [
-    {file = "django-guardian-2.4.0.tar.gz", hash = "sha256:c58a68ae76922d33e6bdc0e69af1892097838de56e93e78a8361090bcd9f89a0"},
-    {file = "django_guardian-2.4.0-py3-none-any.whl", hash = "sha256:440ca61358427e575323648b25f8384739e54c38b3d655c81d75e0cd0d61b697"},
-]
 djangorestframework = [
     {file = "djangorestframework-3.13.1-py3-none-any.whl", hash = "sha256:24c4bf58ed7e85d1fe4ba250ab2da926d263cd57d64b03e8dcef0ac683f8b1aa"},
     {file = "djangorestframework-3.13.1.tar.gz", hash = "sha256:0c33407ce23acc68eca2a6e46424b008c9c02eceb8cf18581921d0092bc1f2ee"},
@@ -753,6 +761,9 @@ djangorestframework = [
 djangorestframework-simplejwt = [
     {file = "djangorestframework_simplejwt-5.1.0-py3-none-any.whl", hash = "sha256:cd3ee3aabdc98de104957c136e74ba2a16571b151c88ecd97421fce171a03ea4"},
     {file = "djangorestframework_simplejwt-5.1.0.tar.gz", hash = "sha256:75323528a7b910843b879194746f0ebc3481c4ad9f354de2dd162160662fb95a"},
+]
+drf-access-policy = [
+    {file = "drf-access-policy-1.1.0.tar.gz", hash = "sha256:6ccb77eb73dfcf485a497d0884cb3b1935e56715c208aa09581cf53c96ead9b5"},
 ]
 drf-spectacular = [
     {file = "drf-spectacular-0.22.0.tar.gz", hash = "sha256:1d6bf33f57ec7d973a7a29a4976fab602333e0bcd0ab16fd3b4cd1e7b427613d"},
@@ -855,6 +866,10 @@ pyflakes = [
 pyjwt = [
     {file = "PyJWT-2.3.0-py3-none-any.whl", hash = "sha256:e0c4bb8d9f0af0c7f5b1ec4c5036309617d03d56932877f2f7a0beeb5318322f"},
     {file = "PyJWT-2.3.0.tar.gz", hash = "sha256:b888b4d56f06f6dcd777210c334e69c737be74755d3e5e9ee3fe67dc18a0ee41"},
+]
+pyparsing = [
+    {file = "pyparsing-3.0.8-py3-none-any.whl", hash = "sha256:ef7b523f6356f763771559412c0d7134753f037822dad1b16945b7b846f7ad06"},
+    {file = "pyparsing-3.0.8.tar.gz", hash = "sha256:7bf433498c016c4314268d95df76c81b842a4cb2b276fa3312cfb1e1d85f6954"},
 ]
 pyrsistent = [
     {file = "pyrsistent-0.18.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:df46c854f490f81210870e509818b729db4488e1f30f2a1ce1698b2295a878d1"},

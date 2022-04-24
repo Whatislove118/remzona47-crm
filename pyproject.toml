@@ -17,7 +17,7 @@ django-cors-headers = "^3.11.0"
 django-allauth = "^0.50.0"
 dj-rest-auth = "^2.2.4"
 gunicorn = "^20.1.0"
-django-guardian = "^2.4.0"
+drf-access-policy = "^1.1.0"
 
 
 [tool.poetry.dev-dependencies]

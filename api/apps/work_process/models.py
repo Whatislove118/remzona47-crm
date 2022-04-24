@@ -28,6 +28,7 @@ class Favour(models.Model):
     class Meta:
         db_table = "favours"
 
+
 class Job(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     favour = models.ForeignKey(
@@ -56,6 +57,13 @@ class Job(models.Model):
     )
     
     objects = JobManager()
+    
+    @property
+    def owner(self):
+        '''
+            To match in access_policy
+        '''
+        return self.master
     
     class Meta:
         db_table = "jobs"

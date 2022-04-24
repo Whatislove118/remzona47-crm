@@ -56,9 +56,6 @@ INSTALLED_APPS = [
     # This allows in-browser requests to your Django application from other origins.
     # Documentation: https://pypi.org/project/django-cors-headers/
     'corsheaders',
-    # django-guardian is an implementation of object permissions for Django
-    # providing an extra authentication backend.
-    'guardian',
     # Custom apps
     'api',
     'rest_auth',
@@ -67,8 +64,6 @@ INSTALLED_APPS = [
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
-    # Guardian object-permissions hook
-    "guardian.backends.ObjectPermissionBackend",
     # Needed to login by username in Django admin, regardless of `allauth`
     "allauth.account.auth_backends.AuthenticationBackend",
 )
@@ -143,9 +138,6 @@ REST_AUTH_SERIALIZERS = {
     "USER_DETAILS_SERIALIZER": "rest_auth.serializers.UserDetailsSerializer"
 }
 
-# GUARDIAN SETTINGS
-
-GUARDIAN_RAISE_403 = True
 
 # SIMPLE_JWT SETTINGS
 if DEBUG:

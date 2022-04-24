@@ -1,4 +1,4 @@
-from .serializers import  JobSerializer
+from .serializers import  JobDetailsSerializer
 from rest_framework import serializers
 from rest_framework.viewsets import ModelViewSet
 from api.apps.work_process.models import Job
@@ -23,7 +23,7 @@ from drf_spectacular.utils import (
 )
 class JobViewSet(ModelViewSet):
     queryset = Job.objects.all()
-    serializer_class = JobSerializer
+    serializer_class = JobDetailsSerializer
     
     def filter_queryset(self, queryset):
         start = self.request.query_params.get("start", None)

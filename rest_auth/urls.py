@@ -1,4 +1,4 @@
-from .views import CreateStaffViewSet, GroupViewSet, PositionViewSet, WorklogViewSet
+from .views import StaffViewSet, GroupViewSet, PositionViewSet, WorklogViewSet
 from rest_framework.routers import SimpleRouter
 
 '''
@@ -7,7 +7,7 @@ from rest_framework.routers import SimpleRouter
 router = SimpleRouter()
 router.register(r'staff/worklogs', WorklogViewSet)
 router.register(r'staff/positions', PositionViewSet)
-router.register(r'staff', CreateStaffViewSet)
+router.register(r'staff', StaffViewSet)
 router.register(r'groups', GroupViewSet)
 
 

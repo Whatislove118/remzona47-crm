@@ -12,7 +12,7 @@ class UserManager(UManager):
 
     def _create_user(self, username, email, password, **extra_fields):
         validate_credentials(username, email, password)
-        groups = extra_fields.pop('groups')
+        groups = extra_fields.pop('groups', None)
         user = self.model(username=username, email=self.normalize_email(email), **extra_fields)
         if groups:
             user.groups.set(groups)
@@ -75,21 +75,22 @@ class Position(models.Model):
 
 class Worklogs(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE)
     timeworked = models.DecimalField(max_digits=100, decimal_places=2)
     
     class Meta:
         db_table = "worklogs"
 
 
-@receiver(pre_save, sender=User)
-def user_change_password_signal(sender, **kwargs):
-    user = kwargs.get('instance', None)
-    if user:
-        new_password = user.password
-        try:
-            old_password = User.objects.get(pk=user.pk).password
-        except User.DoesNotExist:
-            old_password = None
-        if new_password != old_password:
-            user.set_password(new_password)
+# @receiver(pre_save, sender=User)
+# def user_change_password_signal(sender, **kwargs):
+#     if not kwargs.get("created"):
+#         user = kwargs.get('instance', None)
+#         if user:
+#             new_password = user.password
+#             try:
+#                 old_password = User.objects.get(pk=user.pk).password
+#             except User.DoesNotExist:
+#                 old_password = None
+#             if new_password != old_password:
+#                 user.set_password(new_password)

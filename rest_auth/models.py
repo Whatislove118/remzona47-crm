@@ -3,7 +3,7 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import UserManager as UManager, AbstractUser
 from django.dispatch import receiver
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 
 from rest_auth.helpers import validate_credentials
 
@@ -83,7 +83,7 @@ class Worklogs(models.Model):
 
 
 @receiver(pre_save, sender=User)
-def user_updated(sender, **kwargs):
+def user_change_password_signal(sender, **kwargs):
     user = kwargs.get('instance', None)
     if user:
         new_password = user.password
@@ -93,4 +93,3 @@ def user_updated(sender, **kwargs):
             old_password = None
         if new_password != old_password:
             user.set_password(new_password)
-    

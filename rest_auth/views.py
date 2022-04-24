@@ -11,11 +11,12 @@ from .serializers import (
     WorklogDetailsSerializer,
     WorklogCreateSerializer,
 )
-from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema
 
 
 User = get_user_model()
 
+@extend_schema(tags=['staff']) 
 class CreateStaffViewSet(ModelViewSet):
     model = User
     queryset = User.objects.staff()
@@ -31,7 +32,7 @@ class CreateStaffViewSet(ModelViewSet):
 class CreateClientViewSet(ModelViewSet):
     pass
 
-
+@extend_schema(tags=['tags']) 
 class GroupViewSet(ModelViewSet):
     model = models.Group
     queryset = models.Group.objects.all()
@@ -39,6 +40,7 @@ class GroupViewSet(ModelViewSet):
     serializer_class = GroupSerializer
 
 
+@extend_schema(tags=['positions']) 
 class PositionViewSet(ModelViewSet):
     model = Position
     queryset = Position.objects.all()
@@ -49,6 +51,7 @@ class PositionViewSet(ModelViewSet):
         return super().perform_create(serializer)
     
     
+@extend_schema(tags=['worklogs']) 
 class WorklogViewSet(ModelViewSet):
     model = Worklogs
     queryset = Worklogs.objects.all()
@@ -67,5 +70,4 @@ class WorklogViewSet(ModelViewSet):
             user_id = self.request.user.id
         if user.has_group(name="master-regular") and user_id != user.id:
             raise serializers.ValidationError("Вы не можете логировать время за другого человека.")
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(user_id=user_id)
+        serializer.save(user_id=user_id)

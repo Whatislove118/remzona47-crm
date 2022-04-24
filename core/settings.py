@@ -23,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-r&nb2s$1ic(o11vc(1e^zhwloccibl!%k0)v1v(xxag4@7@h3='
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-r&nb2s$1ic(o11vc(1e^zhwloccibl!%k0)v1v(xxag4@7@h3=")
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# TODO SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*"] # TODO 
 AUTH_USER_MODEL = "rest_auth.User"
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Rest implementation for Django framework.
     'rest_framework',
     'rest_framework.authtoken',
     # Generate Swagger/OpenAPI 3.0 specifications from a Django Rest Framework API.
@@ -61,7 +62,6 @@ INSTALLED_APPS = [
     # Custom apps
     'api',
     'rest_auth',
-    'api.apps.roster_calendar',
     'api.apps.work_process'
 ]
 
@@ -84,7 +84,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'core.urls'
+
 
 TEMPLATES = [
     {
@@ -102,15 +104,18 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
 # CORS SETTINGS
+
 CORS_ORIGIN_ALLOW_ALL = True
 #CORS_ALLOWED_ORIGINS = ()
 #CORS_ALLOW_CREDENTIALS = True # разрешает использование куков при кросс-доменных запросах
 
 # REST FRAMEWORK SETTINGS
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -128,20 +133,25 @@ REST_FRAMEWORK = {
     # 'EXCEPTION_HANDLER': 'picture.utils.custom_exception_handler'
 }
 
-REST_USE_JWT = True
+# DJ_REST_AUTH SETTINGS
 
+REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'remzona-access'
 JWT_AUTH_REFRESH_COOKIE = 'remzona-refresh'
+
+REST_AUTH_SERIALIZERS = {
+    "USER_DETAILS_SERIALIZER": "rest_auth.serializers.UserDetailsSerializer"
+}
+
+# GUARDIAN SETTINGS
+
+GUARDIAN_RAISE_403 = True
 
 # SIMPLE_JWT SETTINGS
 if DEBUG:
     access_token_lifetime = timedelta(days=5)
 else:
     access_token_lifetime = timedelta(minutes=15)
-
-REST_AUTH_SERIALIZERS = {
-    "USER_DETAILS_SERIALIZER": "rest_auth.serializers.UserDetailsSerializer"
-}
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': access_token_lifetime,
@@ -170,6 +180,9 @@ SIMPLE_JWT = {
     'JTI_CLAIM': 'jti',
 }
 
+
+# DRF_SPECTACULAR SETTINGS
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Remzona-CRM API',
     'VERSION': '0.0.1',
@@ -185,6 +198,7 @@ SPECTACULAR_SETTINGS = {
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -256,7 +270,10 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# CUSTOM PARAMETERS 
 
-API_VERSION = 'v1'
+API_VERSION = os.getenv("API_VERSION", 'v1')
 API_URL = 'api/%s/' % API_VERSION
+MODERATOR_GROUP_NAME = os.getenv("MODERATOR_GROUP_NAME", "master-receiver")
+REGULAR_USERS_GROUP_NAME = os.getenv("REGULAR_USERS_GROUP_NAME", "master-regular")
 

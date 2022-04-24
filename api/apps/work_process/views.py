@@ -1,13 +1,12 @@
-from .serializers import  JobDetailsSerializer
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import (OpenApiParameter, extend_schema,
+                                   extend_schema_view)
 from rest_framework import serializers
 from rest_framework.viewsets import ModelViewSet
+
 from api.apps.work_process.models import Job
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import (
-    OpenApiParameter,
-    extend_schema,
-    extend_schema_view,
-)
+
+from .serializers import JobDetailsSerializer
 
 
 @extend_schema(
@@ -24,10 +23,10 @@ from drf_spectacular.utils import (
 class JobViewSet(ModelViewSet):
     queryset = Job.objects.all()
     serializer_class = JobDetailsSerializer
-    
+
     def filter_queryset(self, queryset):
         start = self.request.query_params.get("start", None)
-        end = self.request.query_params.get('end', None)
+        end = self.request.query_params.get("end", None)
         if start:
             start_date = serializers.DateTimeField().to_internal_value(start)
             self.queryset = self.queryset.filter(started_at__gt=start_date)
@@ -36,10 +35,9 @@ class JobViewSet(ModelViewSet):
             self.queryset = self.queryset.filter(started_at__lt=end_date)
         return queryset
 
-    
     def perform_create(self, serializer):
-        user = self.request.data.get('user')
-        
+        user = self.request.data.get("user")
+
         if user:
             serializer.save()
         return super().perform_create(serializer)

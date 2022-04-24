@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from api.apps.work_process.models import Job
 from rest_auth.serializers import UserDetailsSerializer
 
@@ -6,8 +7,8 @@ from rest_auth.serializers import UserDetailsSerializer
 class JobCreateSerilizer(serializers.ModelSerializer):
     class Meta:
         model = Job
-        fields = '__all__'
-        read_only_fields = ['id', 'status']
+        fields = "__all__"
+        read_only_fields = ["id", "status"]
 
 
 class JobDetailsSerializer(JobCreateSerilizer):
@@ -15,5 +16,5 @@ class JobDetailsSerializer(JobCreateSerilizer):
 
     class Meta(JobCreateSerilizer.Meta):
         model = Job
-        fields = '__all__'
-        read_only_fields = ['id', 'status']
+        fields = "__all__"
+        read_only_fields = ["id", "status"]

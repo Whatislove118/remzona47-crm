@@ -28,6 +28,7 @@ class JobViewSet(ModelViewSet):
     queryset = Job.objects.all()
     permission_classes = (JobAccessPolicy,)
     serializer_class = JobDetailsSerializer
+    model = Job
     
     def get_serializer_class(self):
         if self.action == "create":
@@ -64,6 +65,7 @@ class JobViewSet(ModelViewSet):
 )
 class FavourViewSet(ModelViewSet):
     queryset = Favour.objects.all()
+    model = Favour
     permission_classes = (FavourAccessPolicy,)
     serializer_class = FavourSerializer
 

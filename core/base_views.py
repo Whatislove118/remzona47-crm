@@ -6,7 +6,7 @@ from rest_framework.viewsets import \
 class ModelViewSet(DRFModelViewSet):
     '''
         ModelViewSet from drf including drf-access-policy integration.
-        
+        Should set model attriibute
     '''
     @property
     def access_policy(self):

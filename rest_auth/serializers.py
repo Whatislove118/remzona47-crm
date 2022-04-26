@@ -63,7 +63,7 @@ class WorklogCreateSerializer(serializers.ModelSerializer):
 
 
 class WorklogDetailsSerializer(WorklogCreateSerializer):
-    user = UserDetailsSerializer(many=False)
+    owner = UserDetailsSerializer(many=False)
 
     class Meta(WorklogCreateSerializer.Meta):
         model = Worklogs

@@ -59,7 +59,7 @@ class WorklogCreateSerializer(serializers.ModelSerializer):
         model = Worklogs
         fields = "__all__"
         read_only_fields = ("id",)
-        extra_kwargs = {"user": {"required": False}}
+        extra_kwargs = {"owner": {"required": False}}
 
 
 class WorklogDetailsSerializer(WorklogCreateSerializer):
@@ -69,7 +69,7 @@ class WorklogDetailsSerializer(WorklogCreateSerializer):
         model = Worklogs
         fields = "__all__"
         read_only_fields = ("id",)
-        extra_kwargs = {"user": {"required": False}}
+        extra_kwargs = {"owner": {"required": False}}
 
 
 class StaffDetailsSerializer(serializers.ModelSerializer):

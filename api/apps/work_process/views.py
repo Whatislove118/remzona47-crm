@@ -1,12 +1,16 @@
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import (OpenApiParameter, extend_schema,
-                                   extend_schema_view)
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    extend_schema,
+    extend_schema_view
+)
 from rest_framework import serializers
-from rest_framework.viewsets import ModelViewSet
+from core.access_policies import FavourAccessPolicy, JobAccessPolicy
+from core.base_views import ModelViewSet
 
-from api.apps.work_process.models import Job
+from api.apps.work_process.models import Favour, Job
 
-from .serializers import JobDetailsSerializer
+from .serializers import FavourSerializer, JobCreateSerilizer, JobDetailsSerializer
 
 
 @extend_schema(
@@ -22,7 +26,13 @@ from .serializers import JobDetailsSerializer
 )
 class JobViewSet(ModelViewSet):
     queryset = Job.objects.all()
+    permission_classes = (JobAccessPolicy,)
     serializer_class = JobDetailsSerializer
+    
+    def get_serializer_class(self):
+        if self.action == "create":
+            self.serializer_class = JobCreateSerilizer
+        return super().get_serializer_class()
 
     def filter_queryset(self, queryset):
         start = self.request.query_params.get("start", None)
@@ -36,11 +46,34 @@ class JobViewSet(ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        user = self.request.data.get("user")
-
-        if user:
-            serializer.save()
-        return super().perform_create(serializer)
+        user = self.request.user
+        master_id = self.request.data.get("master")
+        if not master_id:
+            master_id = user.id
+        if user.has_group(name="master-regular") and master_id != user.id:
+            raise serializers.ValidationError(
+                "Вы не можете назначать задачу другому человеку."
+            )
+        serializer.save(master_id=master_id)
 
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
+
+@extend_schema(
+    tags=["favours"],
+)
+class FavourViewSet(ModelViewSet):
+    queryset = Favour.objects.all()
+    permission_classes = (FavourAccessPolicy,)
+    serializer_class = FavourSerializer
+
+    # def perform_create(self, serializer):
+    #     user = self.request.user
+    #     master_id = self.request.data.get("master")
+    #     if not master_id:
+    #         master_id = user.id
+    #     if user.has_group(name="master-regular") and master_id != user.id:
+    #         raise serializers.ValidationError(
+    #             "Вы не можете назначать задачу другому человеку."
+    #         )
+    #     serializer.save(master_id=master_id)

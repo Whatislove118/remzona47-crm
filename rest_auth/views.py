@@ -72,19 +72,17 @@ class CreateClientViewSet(ModelViewSet):
 
 @extend_schema(tags=["groups"])
 class GroupViewSet(ModelViewSet):
+    permission_classes = (StaffAccessPolicy,)
     model = models.Group
     queryset = models.Group.objects.all()
-    permission_classes = [
-        permissions.IsAdminUser,
-    ]
     serializer_class = GroupSerializer
 
 
 @extend_schema(tags=["positions"])
 class PositionViewSet(ModelViewSet):
+    permission_classes = (StaffAccessPolicy,)
     model = Position
     queryset = Position.objects.all()
-    permission_classes = (permissions.IsAdminUser,)
     serializer_class = PositionSerializer
 
     def perform_create(self, serializer):
@@ -93,11 +91,9 @@ class PositionViewSet(ModelViewSet):
 
 @extend_schema(tags=["worklogs"])
 class WorklogViewSet(ModelViewSet):
+    permission_classes = (StaffAccessPolicy,)
     model = Worklogs
     queryset = Worklogs.objects.all()
-    permission_classes = [
-        IsAuthenticated,
-    ]
     serializer_class = WorklogDetailsSerializer
 
     def get_serializer_class(self):
@@ -107,11 +103,11 @@ class WorklogViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-        user_id = self.request.data.get("user")
-        if not user_id:
-            user_id = self.request.user.id
-        if user.has_group(name="master-regular") and user_id != user.id:
+        owner_id = self.request.data.get("user")
+        if not owner_id:
+            owner_id = self.request.user.id
+        if user.has_group(name="master-regular") and owner_id != user.id:
             raise serializers.ValidationError(
                 "Вы не можете логировать время за другого человека."
             )
-        serializer.save(user_id=user_id)
+        serializer.save(owner_id=owner_id)

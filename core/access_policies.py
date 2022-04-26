@@ -38,3 +38,38 @@ class StaffAccessPolicy(BaseAccessPolicy):
     @classmethod
     def scope_queryset(cls, request, qs):
         return qs
+
+class JobAccessPolicy(BaseAccessPolicy):
+    statements = [
+        {
+            "action": ["list", "retrieve"],
+            "principal": "authenticated",
+            "effect": "allow",
+        },
+        {
+            "action": ["create", "destroy", "partial_update", "update"],
+            "principal": [f"group:{settings.MODERATOR_GROUP_NAME}", "admin"],
+            "effect": "allow",
+        },
+    ]
+
+    @classmethod
+    def scope_queryset(cls, request, qs):
+        return qs
+class FavourAccessPolicy(BaseAccessPolicy):
+    statements = [
+        {
+            "action": ["list", "retrieve"],
+            "principal": "authenticated",
+            "effect": "allow",
+        },
+        {
+            "action": ["create", "destroy", "partial_update", "update"],
+            "principal": [f"group:{settings.MODERATOR_GROUP_NAME}", "admin"],
+            "effect": "allow",
+        },
+    ]
+    
+    @classmethod
+    def scope_queryset(cls, request, qs):
+        return qs

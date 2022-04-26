@@ -4,6 +4,10 @@ from rest_framework.viewsets import \
 
 
 class ModelViewSet(DRFModelViewSet):
+    '''
+        ModelViewSet from drf including drf-access-policy integration.
+        
+    '''
     @property
     def access_policy(self):
         return self.permission_classes[0]
@@ -13,6 +17,10 @@ class ModelViewSet(DRFModelViewSet):
 
 
 class ReadOnlyModelViewSet(DRFReadOnlyModelViewSet):
+    '''
+        ReadOnlyModelViewSet from drf including drf-access-policy integration.
+        
+    '''
     @property
     def access_policy(self):
         return self.permission_classes[0]

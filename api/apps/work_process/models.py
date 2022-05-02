@@ -1,18 +1,11 @@
-import uuid
-
 from django.contrib.auth import get_user_model
 from django.db import models
-
+from model_utils.fields import UUIDField, StatusField
+from model_utils import Choices
+from model_utils.models import TimeFramedModel
 
 
 User = get_user_model()
-
-
-class JobStatus(models.Choices):
-    opened = "Открыта"
-    in_progress = "В работе"
-    resolved = "Выполнена"
-    postpone = "Отложена"
 
 
 class JobManager(models.Manager):
@@ -30,7 +23,7 @@ class Favour(models.Model):
 
 
 class Job(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = UUIDField(primary_key=True, version=4, editable=False)
     favour = models.ForeignKey(
         Favour,
         related_name="jobs",
@@ -50,9 +43,9 @@ class Job(models.Model):
     ended_at = models.DateTimeField(null=False, blank=False)
 
     client = None
-    status = models.CharField(
-        max_length=100, choices=JobStatus.choices, default=JobStatus.opened
-    )
+    
+    STATUS = Choices("Открыта", "В работе", "Выполнена", "Отложена")
+    status = StatusField(default="Открыта", db_index=True)
 
     objects = JobManager()
 

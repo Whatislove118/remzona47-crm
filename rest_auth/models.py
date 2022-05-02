@@ -1,11 +1,9 @@
 from datetime import datetime
-import uuid
-
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import UserManager as UManager
 from django.db import models
-
+from model_utils.fields import UUIDField
 from rest_auth.helpers import validate_credentials
 
 
@@ -35,7 +33,7 @@ class UserManager(UManager):
 
 
 class User(AbstractUser):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)
+    id = UUIDField(primary_key=True, version=4, editable=False)
     patronomic = models.CharField(max_length=15, null=True, blank=True)
     salary = models.DecimalField(default=0.00, decimal_places=2, max_digits=10)
     position = models.ForeignKey(
@@ -56,7 +54,7 @@ class User(AbstractUser):
 
 
 class Client(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)
+    id = UUIDField(primary_key=True, version=4, editable=False)
     first_name = models.CharField(max_length=20, null=False, blank=False)
     last_name = models.CharField(max_length=20, null=False, blank=False)
     patronomic = models.CharField(max_length=20, null=True, blank=True)
@@ -72,7 +70,7 @@ class PositionManager(models.Manager):
 
 
 class Position(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = UUIDField(primary_key=True, version=4, editable=False)
     name = models.CharField(max_length=100, null=False, blank=False, unique=True)
     rate = models.PositiveIntegerField(default=0)  # rate per hour
     description = models.TextField()
@@ -84,7 +82,7 @@ class Position(models.Model):
 
 
 class Worklogs(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = UUIDField(primary_key=True, version=4, editable=False)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE
     )

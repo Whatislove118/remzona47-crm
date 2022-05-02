@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet as DRFModelViewSet
 from rest_framework.viewsets import \
     ReadOnlyModelViewSet as DRFReadOnlyModelViewSet
+from rest_framework.decorators import action
 
 
 class ModelViewSet(DRFModelViewSet):
@@ -27,3 +28,10 @@ class ReadOnlyModelViewSet(DRFReadOnlyModelViewSet):
 
     def get_queryset(self):
         return self.access_policy.scope_queryset(self.request, self.model.objects.all())
+
+class CountMixin:
+    
+    @action(methods=["GET"], detail=False)
+    def count(self, request, *args, **kwargs):
+        qs = self.get_queryset()
+        return {"count": qs.count()}

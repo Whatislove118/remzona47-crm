@@ -4,18 +4,25 @@ from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework import exceptions, serializers
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from core import permissions
-from core.access_policies import StaffAccessPolicy
+from core.access_policies import (
+    StaffAccessPolicy,
+    ClientAccessPolicy,
+)
 from core.base_views import ModelViewSet
 from core.validation import ErrorMessages, Messages
-from rest_auth.models import Position, Worklogs
+from rest_auth.models import Client, Position, Worklogs
 
-from .serializers import (GroupSerializer, PositionSerializer,
-                          StaffCreateSerializer, StaffDetailsSerializer,
-                          WorklogCreateSerializer, WorklogDetailsSerializer)
+from .serializers import (
+    GroupSerializer,
+    PositionSerializer,
+    StaffCreateSerializer,
+    StaffDetailsSerializer,
+    WorklogCreateSerializer,
+    WorklogDetailsSerializer,
+    ClientSerializer,
+)
 
 User = get_user_model()
 
@@ -66,9 +73,11 @@ class StaffViewSet(ModelViewSet):
         return Response(Messages.PASSWORD_CHANGED)
 
 
-class CreateClientViewSet(ModelViewSet):
-    pass
-
+class ClientsViewSet(ModelViewSet):
+    queryset = Client.objects.all()
+    model = Client
+    permission_classes = (ClientAccessPolicy,)
+    serializers_class = ClientSerializer
 
 @extend_schema(tags=["groups"])
 class GroupViewSet(ModelViewSet):

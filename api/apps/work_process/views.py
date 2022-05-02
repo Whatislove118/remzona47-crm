@@ -9,6 +9,7 @@ from core.access_policies import FavourAccessPolicy, JobAccessPolicy
 from core.base_views import ModelViewSet
 
 from api.apps.work_process.models import Favour, Job
+from rest_auth.models import Client
 
 from .serializers import FavourSerializer, JobCreateSerilizer, JobDetailsSerializer
 
@@ -35,15 +36,16 @@ class JobViewSet(ModelViewSet):
             self.serializer_class = JobCreateSerilizer
         return super().get_serializer_class()
 
-    def filter_queryset(self, queryset):
+    def get_queryset(self):
+        queryset = self.access_policy.scope_queryset(self.request, self.queryset)
         start = self.request.query_params.get("start", None)
         end = self.request.query_params.get("end", None)
         if start:
             start_date = serializers.DateTimeField().to_internal_value(start)
-            self.queryset = self.queryset.filter(started_at__gt=start_date)
+            queryset = queryset.filter(started_at__gte=start_date)
         if end:
             end_date = serializers.DateTimeField().to_internal_value(end)
-            self.queryset = self.queryset.filter(started_at__lt=end_date)
+            queryset = queryset.filter(ended_at__lte=end_date)
         return queryset
 
     def perform_create(self, serializer):

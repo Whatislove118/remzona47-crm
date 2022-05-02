@@ -4,9 +4,16 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from rest_framework import serializers
 
-from rest_auth.models import Position, Worklogs
+from rest_auth.models import Client, Position, Worklogs
 
 UserModel = get_user_model()
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = "__all__"
+        read_only_fields = ("id", )
 
 
 class GroupSerializer(serializers.ModelSerializer):

@@ -1,34 +1,23 @@
 from datetime import datetime
+
 from django.contrib.auth import get_user_model, models
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import (
-    OpenApiExample,
-    OpenApiParameter,
-    extend_schema,
-    extend_schema_view,
-)
+from drf_spectacular.utils import (OpenApiExample, OpenApiParameter,
+                                   extend_schema, extend_schema_view)
 from rest_framework import exceptions, serializers
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
-from core.access_policies import (
-    StaffAccessPolicy,
-    ClientAccessPolicy,
-)
+from core.access_policies import ClientAccessPolicy, StaffAccessPolicy
 from core.base_views import ModelViewSet
 from core.validation import ErrorMessages, Messages
 from rest_auth.models import Client, Position, Worklogs
 
-from .serializers import (
-    GroupSerializer,
-    PositionSerializer,
-    StaffCreateSerializer,
-    StaffDetailsSerializer,
-    WorklogCreateSerializer,
-    WorklogDetailsSerializer,
-    ClientSerializer,
-)
+from .serializers import (ClientSerializer, GroupSerializer,
+                          PositionSerializer, StaffCreateSerializer,
+                          StaffDetailsSerializer, WorklogCreateSerializer,
+                          WorklogDetailsSerializer)
 
 User = get_user_model()
 
@@ -83,7 +72,9 @@ class StaffViewSet(ModelViewSet):
 @extend_schema_view(
     list=extend_schema(
         parameters=[
-            OpenApiParameter("newest", OpenApiTypes.BOOL, OpenApiParameter.QUERY, default=False),
+            OpenApiParameter(
+                "newest", OpenApiTypes.BOOL, OpenApiParameter.QUERY, default=False
+            ),
         ],
     ),
 )
@@ -97,12 +88,13 @@ class ClientsViewSet(ModelViewSet):
         queryset = self.access_policy.scope_queryset(self.request, self.queryset)
         newest_param = self.request.query_params.get("newest")
         if newest_param:
-            newest = serializers.BooleanField().to_internal_value(data=self.request.query_params.get("newest"))
+            newest = serializers.BooleanField().to_internal_value(
+                data=self.request.query_params.get("newest")
+            )
             if newest:
                 current_month = datetime.now().month
                 queryset = queryset.filter(created_at__month=current_month)
         return queryset
-
 
 
 @extend_schema(tags=["groups"])

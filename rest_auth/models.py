@@ -1,9 +1,11 @@
 from datetime import datetime
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import UserManager as UManager
 from django.db import models
 from model_utils.fields import UUIDField
+
 from rest_auth.helpers import validate_credentials
 
 

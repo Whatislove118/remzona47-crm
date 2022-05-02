@@ -8,7 +8,9 @@ black .
 echo "Rin isort"
 isort .
 echo "Run flake8"
-flake8 . --count --statistics
+flake8 rest_auth --count --statistics
+flake8 core --count --statistics
+flake8 api --count --statistics
 echo "Run mypy"
 mypy .
 echo "OK"

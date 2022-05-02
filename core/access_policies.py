@@ -39,6 +39,7 @@ class StaffAccessPolicy(BaseAccessPolicy):
     def scope_queryset(cls, request, qs):
         return qs
 
+
 class JobAccessPolicy(BaseAccessPolicy):
     statements = [
         {
@@ -56,6 +57,8 @@ class JobAccessPolicy(BaseAccessPolicy):
     @classmethod
     def scope_queryset(cls, request, qs):
         return qs
+
+
 class FavourAccessPolicy(BaseAccessPolicy):
     statements = [
         {
@@ -69,7 +72,7 @@ class FavourAccessPolicy(BaseAccessPolicy):
             "effect": "allow",
         },
     ]
-    
+
     @classmethod
     def scope_queryset(cls, request, qs):
         return qs
@@ -83,8 +86,7 @@ class ClientAccessPolicy(BaseAccessPolicy):
             "effect": "allow",
         }
     ]
-    
-    
+
     @classmethod
     def scope_queryset(cls, request, qs):
         return qs

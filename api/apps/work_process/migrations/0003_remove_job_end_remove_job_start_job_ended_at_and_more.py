@@ -6,27 +6,30 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('work_process', '0002_remove_job_ended_at_remove_job_started_at_job_end_and_more'),
+        (
+            "work_process",
+            "0002_remove_job_ended_at_remove_job_started_at_job_end_and_more",
+        ),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='job',
-            name='end',
+            model_name="job",
+            name="end",
         ),
         migrations.RemoveField(
-            model_name='job',
-            name='start',
+            model_name="job",
+            name="start",
         ),
         migrations.AddField(
-            model_name='job',
-            name='ended_at',
+            model_name="job",
+            name="ended_at",
             field=models.DateTimeField(default=None),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='job',
-            name='started_at',
+            model_name="job",
+            name="started_at",
             field=models.DateTimeField(default=None),
             preserve_default=False,
         ),

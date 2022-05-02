@@ -1,9 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from model_utils.fields import UUIDField, StatusField
 from model_utils import Choices
-from model_utils.models import TimeFramedModel
-
+from model_utils.fields import StatusField, UUIDField
 
 User = get_user_model()
 
@@ -43,7 +41,7 @@ class Job(models.Model):
     ended_at = models.DateTimeField(null=False, blank=False)
 
     client = None
-    
+
     STATUS = Choices("Открыта", "В работе", "Выполнена", "Отложена")
     status = StatusField(default="Открыта", db_index=True)
 
@@ -58,5 +56,3 @@ class Job(models.Model):
 
     class Meta:
         db_table = "jobs"
-
-

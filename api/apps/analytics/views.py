@@ -1,6 +1,6 @@
 # Create your views here.
 from api.apps.analytics.serializers import AnalyticsUserWorklogsSerializer
-from core.base_views import ModelViewSet
+from core.base_views import ReadOnlyModelViewSet
 from core.access_policies import AnalyticsAccessPolicy
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import extend_schema
@@ -10,7 +10,7 @@ UserModel = get_user_model()
 
 
 @extend_schema(tags=["analytics"])
-class AnalyticsUserWorklogsViewSet(ModelViewSet):
+class AnalyticsUserWorklogsViewSet(ReadOnlyModelViewSet):
     model = UserModel
     queryset = UserModel.objects.all()
     permission_classes = (AnalyticsAccessPolicy, )

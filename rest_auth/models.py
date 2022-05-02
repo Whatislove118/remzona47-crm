@@ -1,3 +1,4 @@
+from datetime import datetime
 import uuid
 
 from django.conf import settings
@@ -60,6 +61,7 @@ class Client(models.Model):
     last_name = models.CharField(max_length=20, null=False, blank=False)
     patronomic = models.CharField(max_length=20, null=True, blank=True)
     phone_number = models.CharField(max_length=20, null=False, blank=False, unique=True)
+    created_at = models.DateTimeField(default=datetime.now())
 
     class Meta:
         db_table = "clients"

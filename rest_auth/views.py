@@ -1,3 +1,4 @@
+from re import L
 from django.contrib.auth import get_user_model, models
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiExample, extend_schema
@@ -73,11 +74,15 @@ class StaffViewSet(ModelViewSet):
         return Response(Messages.PASSWORD_CHANGED)
 
 
+@extend_schema(tags=["clients"])
 class ClientsViewSet(ModelViewSet):
     queryset = Client.objects.all()
     model = Client
     permission_classes = (ClientAccessPolicy,)
-    serializers_class = ClientSerializer
+    serializer_class = ClientSerializer
+
+    def list_newest(self, request, *args, **kwargs):
+        pass
 
 @extend_schema(tags=["groups"])
 class GroupViewSet(ModelViewSet):

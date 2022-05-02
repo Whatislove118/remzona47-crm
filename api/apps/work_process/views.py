@@ -5,10 +5,11 @@ from rest_framework import serializers
 
 from api.apps.work_process.models import Favour, Job
 from core.access_policies import FavourAccessPolicy, JobAccessPolicy
-from core.base_views import ModelViewSet
-
+from core.base_views import CountMixin, ModelViewSet
+from rest_framework.decorators import action
 from .serializers import (FavourSerializer, JobCreateSerilizer,
                           JobDetailsSerializer)
+from rest_framework.response import Response
 
 
 @extend_schema(
@@ -19,10 +20,12 @@ from .serializers import (FavourSerializer, JobCreateSerilizer,
         parameters=[
             OpenApiParameter("start", OpenApiTypes.DATETIME, OpenApiParameter.QUERY),
             OpenApiParameter("end", OpenApiTypes.DATETIME, OpenApiParameter.QUERY),
+            OpenApiParameter("status", OpenApiTypes.STR, OpenApiParameter.QUERY),
+            OpenApiParameter("master", OpenApiTypes.ANY, OpenApiParameter.QUERY)
         ],
     ),
 )
-class JobViewSet(ModelViewSet):
+class JobViewSet(CountMixin, ModelViewSet):
     queryset = Job.objects.all()
     permission_classes = (JobAccessPolicy,)
     serializer_class = JobDetailsSerializer
@@ -35,14 +38,27 @@ class JobViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        
         start = self.request.query_params.get("start", None)
         end = self.request.query_params.get("end", None)
+        status = self.request.query_params.get("status", None)
+        master = self.request.query_params.get("master", None)
+
         if start:
             start_date = serializers.DateTimeField().to_internal_value(start)
             queryset = queryset.filter(started_at__gte=start_date)
         if end:
             end_date = serializers.DateTimeField().to_internal_value(end)
             queryset = queryset.filter(ended_at__lte=end_date)
+        if status:
+            queryset = queryset.filter(status=status)
+        if master:
+            try:
+                master_id = serializers.UUIDField().to_internal_value(data=master)
+                queryset = queryset.filter(master_id=master_id)
+            except serializers.ValidationError:
+                # username field
+                queryset.filter(master__username=master)
         return queryset
 
     def perform_create(self, serializer):
@@ -55,9 +71,6 @@ class JobViewSet(ModelViewSet):
                 "Вы не можете назначать задачу другому человеку."
             )
         serializer.save(master_id=master_id)
-
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
 
 
 @extend_schema(

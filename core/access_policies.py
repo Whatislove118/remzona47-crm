@@ -43,7 +43,7 @@ class StaffAccessPolicy(BaseAccessPolicy):
 class JobAccessPolicy(BaseAccessPolicy):
     statements = [
         {
-            "action": ["list", "retrieve"],
+            "action": ["list", "retrieve", "statuses"],
             "principal": "authenticated",
             "effect": "allow",
         },
@@ -79,6 +79,20 @@ class FavourAccessPolicy(BaseAccessPolicy):
 
 
 class ClientAccessPolicy(BaseAccessPolicy):
+    statements = [
+        {
+            "action": ["*"],
+            "principal": [f"group:{settings.MODERATOR_GROUP_NAME}", "admin"],
+            "effect": "allow",
+        }
+    ]
+
+    @classmethod
+    def scope_queryset(cls, request, qs):
+        return qs
+
+
+class AnalyticsAccessPolicy(BaseAccessPolicy):
     statements = [
         {
             "action": ["*"],

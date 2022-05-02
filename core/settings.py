@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "api",
     "rest_auth",
     "api.apps.work_process",
+    "api.apps.analytics",
 ]
 
 AUTHENTICATION_BACKENDS = (

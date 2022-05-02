@@ -34,7 +34,7 @@ class JobViewSet(ModelViewSet):
         return super().get_serializer_class()
 
     def get_queryset(self):
-        queryset = self.access_policy.scope_queryset(self.request, self.queryset)
+        queryset = super().get_queryset()
         start = self.request.query_params.get("start", None)
         end = self.request.query_params.get("end", None)
         if start:

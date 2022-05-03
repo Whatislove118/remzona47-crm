@@ -1,6 +1,8 @@
 # Create your views here.
-from api.apps.analytics.serializers import AnalyticsUserWorklogsSerializer
-from core.base_views import ReadOnlyModelViewSet
+from yaml import serialize
+from api.apps.analytics.serializers import AnalyticsJobsSerializer, AnalyticsUserWorklogsSerializer
+from api.apps.work_process.models import Job
+from core.base_views import ListModelViewSet
 from core.access_policies import AnalyticsAccessPolicy
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import extend_schema
@@ -10,7 +12,7 @@ UserModel = get_user_model()
 
 
 @extend_schema(tags=["analytics"])
-class AnalyticsUserWorklogsViewSet(ReadOnlyModelViewSet):
+class AnalyticsUserWorklogsViewSet(ListModelViewSet):
     model = UserModel
     queryset = UserModel.objects.all()
     permission_classes = (AnalyticsAccessPolicy, )
@@ -20,4 +22,18 @@ class AnalyticsUserWorklogsViewSet(ReadOnlyModelViewSet):
         users = self.model.objects.users_worklogs_exp()
         serializer = self.serializer_class(users, many=True)
         return Response(serializer.data)
+
+
+@extend_schema(tags=["analytics"])
+class AnalyticsJobsViewSet(ListModelViewSet):
+    model = Job
+    queryset = model.objects.all()
+    permission_classes = (AnalyticsAccessPolicy, )
+    serializer_class = AnalyticsJobsSerializer
     
+    def list(self, request, *args, **kwargs):
+        aggregated_jobs = []
+        for _, status in self.model.STATUS:
+            aggregated_jobs.append(self.model.objects.count_by_status(status=status))
+        serializer = self.serializer_class(aggregated_jobs, many=True)
+        return Response(serializer.data)

@@ -2,13 +2,8 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from model_utils import Choices
 from model_utils.fields import StatusField, UUIDField
-
+from django.db.models.functions import Coalesce
 User = get_user_model()
-
-
-class JobManager(models.Manager):
-
-    pass
 
 
 class Favour(models.Model):
@@ -18,6 +13,21 @@ class Favour(models.Model):
 
     class Meta:
         db_table = "favours"
+
+
+class JobManager(models.Manager):
+
+    def count_by_status(self, status):
+        res = self.get_queryset() \
+            .values("status") \
+            .filter(status=status) \
+            .annotate(
+                count=models.Count("id")
+            ) \
+            .first()
+        if res is None:
+            res = {"status": status, "count": 0}
+        return res
 
 
 class Job(models.Model):
@@ -42,8 +52,13 @@ class Job(models.Model):
 
     client = None
 
-    STATUS = Choices("Открыта", "В работе", "Выполнена", "Отложена")
-    status = StatusField(default="Открыта", db_index=True)
+    STATUS = Choices(
+        "Открыта",
+        "В работе",
+        "Выполнена",
+        "Отложена",
+    )
+    status = StatusField(default="opened", db_index=True)
 
     objects = JobManager()
 

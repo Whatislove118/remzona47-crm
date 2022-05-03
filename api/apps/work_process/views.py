@@ -44,12 +44,11 @@ class JobViewSet(CountMixin, ModelViewSet):
         status = self.request.query_params.get("status", None)
         master = self.request.query_params.get("master", None)
 
-        if start:
+        if start and end:
             start_date = serializers.DateTimeField().to_internal_value(start)
-            queryset = queryset.filter(started_at__gte=start_date)
-        if end:
             end_date = serializers.DateTimeField().to_internal_value(end)
-            queryset = queryset.filter(ended_at__lte=end_date)
+            queryset = queryset.filter(started_at__lte=end_date, ended_at__gte=start_date)
+        
         if status:
             queryset = queryset.filter(status=status)
         if master:

@@ -9,7 +9,6 @@ class JobCreateSerializer(serializers.ModelSerializer):
         model = Job
         fields = "__all__"
         read_only_fields = ["id", "status"]
-        extra_kwargs = {"master": {"required": False}}
 
 
 class JobDetailsSerializer(JobCreateSerializer):

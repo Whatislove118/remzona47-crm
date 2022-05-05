@@ -106,3 +106,30 @@ class AnalyticsAccessPolicy(BaseAccessPolicy):
     @classmethod
     def scope_queryset(cls, request, qs):
         return qs
+
+
+class BrandAccessPolicy(BaseAccessPolicy):
+    statements = [
+        {
+            "action": ["list", "retrieve"],
+            "principal": "staff",
+            "effect": "allow",
+        },
+        {
+            "action": ["create", "destroy", "partial_update", "update"],
+            "principal": [f"group:{settings.MODERATOR_GROUP_NAME}", "admin"],
+            "effect": "allow",
+        },
+    ]
+
+    @classmethod
+    def scope_queryset(cls, request, qs):
+        return qs
+
+
+class CarModelAccessPolicy(BrandAccessPolicy):
+    pass
+
+
+class CarAccessPolicy(BrandAccessPolicy):
+    pass

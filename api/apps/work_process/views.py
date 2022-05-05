@@ -1,5 +1,8 @@
+from django.conf import settings
+from django_filters import rest_framework as filters
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
+from requests import request
 from rest_framework import serializers
 
 from api.apps.work_process.models import Favour, Job
@@ -60,15 +63,12 @@ class JobViewSet(CountMixin, ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        user = self.request.user
-        master_id = self.request.data.get("master")
-        if not master_id:
-            master_id = user.id
-        if user.has_group(name="master-regular") and master_id != user.id:
+        user = request.user
+        if user.has_group(name=settings.REGULAR_USERS_GROUP_NAME):
             raise serializers.ValidationError(
                 "Вы не можете назначать задачу другому человеку."
             )
-        serializer.save(master_id=master_id)
+        serializer.save()
 
 
 @extend_schema(
@@ -77,6 +77,8 @@ class JobViewSet(CountMixin, ModelViewSet):
 class FavourViewSet(ModelViewSet):
     queryset = Favour.objects.all()
     model = Favour
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_fields = ("name",)
     permission_classes = (FavourAccessPolicy,)
     serializer_class = FavourSerializer
 

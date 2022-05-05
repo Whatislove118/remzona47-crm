@@ -105,6 +105,8 @@ class ClientsViewSet(ModelViewSet):
     queryset = Client.objects.all()
     model = Client
     permission_classes = (ClientAccessPolicy,)
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_fields = ("last_name", "phone_number")
     serializer_class = ClientSerializer
 
     def get_queryset(self):

@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "rest_auth",
     "api.apps.work_process",
     "api.apps.analytics",
+    "api.apps.cars",
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -126,7 +127,6 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
-    # 'EXCEPTION_HANDLER': 'picture.utils.custom_exception_handler'
 }
 
 # DJ_REST_AUTH SETTINGS

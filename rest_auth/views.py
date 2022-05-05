@@ -1,7 +1,8 @@
 from datetime import datetime
+
 from django.conf import settings
-from django_filters import rest_framework as filters
 from django.contrib.auth import get_user_model, models
+from django_filters import rest_framework as filters
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import (
     OpenApiExample,
@@ -15,7 +16,6 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from core.access_policies import ClientAccessPolicy, StaffAccessPolicy
-
 from core.base_views import ModelViewSet
 from core.validation import ErrorMessages, Messages
 from rest_auth.models import Client, Position, Worklogs

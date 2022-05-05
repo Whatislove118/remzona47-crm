@@ -1,15 +1,12 @@
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import (OpenApiParameter, extend_schema,
-                                   extend_schema_view)
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import serializers
 
 from api.apps.work_process.models import Favour, Job
 from core.access_policies import FavourAccessPolicy, JobAccessPolicy
 from core.base_views import CountMixin, ModelViewSet
-from rest_framework.decorators import action
-from .serializers import (FavourSerializer, JobCreateSerializer,
-                          JobDetailsSerializer)
-from rest_framework.response import Response
+
+from .serializers import FavourSerializer, JobCreateSerializer, JobDetailsSerializer
 
 
 @extend_schema(
@@ -21,7 +18,7 @@ from rest_framework.response import Response
             OpenApiParameter("start", OpenApiTypes.DATETIME, OpenApiParameter.QUERY),
             OpenApiParameter("end", OpenApiTypes.DATETIME, OpenApiParameter.QUERY),
             OpenApiParameter("status", OpenApiTypes.STR, OpenApiParameter.QUERY),
-            OpenApiParameter("master", OpenApiTypes.ANY, OpenApiParameter.QUERY)
+            OpenApiParameter("master", OpenApiTypes.ANY, OpenApiParameter.QUERY),
         ],
     ),
 )
@@ -47,7 +44,9 @@ class JobViewSet(CountMixin, ModelViewSet):
         if start and end:
             start_date = serializers.DateTimeField().to_internal_value(start)
             end_date = serializers.DateTimeField().to_internal_value(end)
-            queryset = queryset.filter(started_at__lte=end_date, ended_at__gte=start_date)
+            queryset = queryset.filter(
+                started_at__lte=end_date, ended_at__gte=start_date
+            )
 
         if status:
             queryset = queryset.filter(status=status)

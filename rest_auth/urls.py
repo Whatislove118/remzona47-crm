@@ -1,7 +1,12 @@
 from rest_framework.routers import SimpleRouter
 
-from .views import (ClientsViewSet, GroupViewSet, PositionViewSet,
-                    StaffViewSet, WorklogViewSet)
+from .views import (
+    ClientsViewSet,
+    GroupViewSet,
+    PositionViewSet,
+    StaffViewSet,
+    WorklogViewSet,
+)
 
 """
     urlpatterns with excluded routes

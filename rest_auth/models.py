@@ -93,15 +93,21 @@ class WorklogsManager(models.Manager):
     use_for_related_fields = True
 
     def total_exp(self, user):
-        return self.get_queryset() \
-            .filter(owner_id=user.id) \
+        return (
+            self.get_queryset()
+            .filter(owner_id=user.id)
             .aggregate(models.Sum("timeworked"))
+        )
 
 
 class Worklogs(models.Model):
     id = UUIDField(primary_key=True, version=4, editable=False)
     owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="worklogs", null=False, blank=False, on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL,
+        related_name="worklogs",
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
     )
     timeworked = models.DecimalField(max_digits=100, decimal_places=2)
     objects = WorklogsManager()

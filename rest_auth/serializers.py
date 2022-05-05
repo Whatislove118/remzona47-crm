@@ -1,5 +1,6 @@
 from dj_rest_auth.serializers import \
     UserDetailsSerializer as DjUserDetailSerializer
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from rest_framework import serializers
@@ -118,5 +119,5 @@ class StaffCreateSerializer(StaffDetailsSerializer):
     def create(self, validated_data: dict) -> UserModel:
         validated_data["is_staff"] = True
         if not validated_data.get("groups"):
-            validated_data["groups"] = [Group.objects.get(name="master-regular")]
+            validated_data["groups"] = [Group.objects.get(name=settings.REGULAR_USERS_GROUP_NAME)]
         return UserModel.objects.create_user(**validated_data)

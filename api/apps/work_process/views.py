@@ -7,7 +7,7 @@ from api.apps.work_process.models import Favour, Job
 from core.access_policies import FavourAccessPolicy, JobAccessPolicy
 from core.base_views import CountMixin, ModelViewSet
 from rest_framework.decorators import action
-from .serializers import (FavourSerializer, JobCreateSerilizer,
+from .serializers import (FavourSerializer, JobCreateSerializer,
                           JobDetailsSerializer)
 from rest_framework.response import Response
 
@@ -33,12 +33,12 @@ class JobViewSet(CountMixin, ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == "create":
-            self.serializer_class = JobCreateSerilizer
+            self.serializer_class = JobCreateSerializer
         return super().get_serializer_class()
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        
+
         start = self.request.query_params.get("start", None)
         end = self.request.query_params.get("end", None)
         status = self.request.query_params.get("status", None)
@@ -48,7 +48,7 @@ class JobViewSet(CountMixin, ModelViewSet):
             start_date = serializers.DateTimeField().to_internal_value(start)
             end_date = serializers.DateTimeField().to_internal_value(end)
             queryset = queryset.filter(started_at__lte=end_date, ended_at__gte=start_date)
-        
+
         if status:
             queryset = queryset.filter(status=status)
         if master:

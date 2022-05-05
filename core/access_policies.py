@@ -19,7 +19,7 @@ class StaffAccessPolicy(BaseAccessPolicy):
     statements = [
         {
             "action": ["list", "retrieve"],
-            "principal": "authenticated",
+            "principal": "staff",
             "effect": "allow",
         },
         {
@@ -29,7 +29,7 @@ class StaffAccessPolicy(BaseAccessPolicy):
         },
         {
             "action": ["update", "partial_update", "change_password"],
-            "principal": "authenticated",
+            "principal": "staff",
             "condition": "is_owner_or_superuser",
             "effect": "allow",
         },
@@ -37,14 +37,14 @@ class StaffAccessPolicy(BaseAccessPolicy):
 
     @classmethod
     def scope_queryset(cls, request, qs):
-        return qs
+        return qs.filter(is_staff=True, is_superuser=False)
 
 
 class JobAccessPolicy(BaseAccessPolicy):
     statements = [
         {
             "action": ["list", "retrieve", "statuses"],
-            "principal": "authenticated",
+            "principal": "staff",
             "effect": "allow",
         },
         {
@@ -56,6 +56,8 @@ class JobAccessPolicy(BaseAccessPolicy):
 
     @classmethod
     def scope_queryset(cls, request, qs):
+        if request.user.groups.filter(name=settings.REGULAR_USERS_GROUP_NAME).exists():
+            qs = qs.filter(master=request.user)
         return qs
 
 
@@ -63,7 +65,7 @@ class FavourAccessPolicy(BaseAccessPolicy):
     statements = [
         {
             "action": ["list", "retrieve"],
-            "principal": "authenticated",
+            "principal": "staff",
             "effect": "allow",
         },
         {

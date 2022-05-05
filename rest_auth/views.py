@@ -1,23 +1,34 @@
 from datetime import datetime
-
+from django.conf import settings
+from django_filters import rest_framework as filters
 from django.contrib.auth import get_user_model, models
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import (OpenApiExample, OpenApiParameter,
-                                   extend_schema, extend_schema_view)
+from drf_spectacular.utils import (
+    OpenApiExample,
+    OpenApiParameter,
+    extend_schema,
+    extend_schema_view,
+)
 from rest_framework import exceptions, serializers
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from core.access_policies import ClientAccessPolicy, StaffAccessPolicy
+
 from core.base_views import ModelViewSet
 from core.validation import ErrorMessages, Messages
 from rest_auth.models import Client, Position, Worklogs
 
-from .serializers import (ClientSerializer, GroupSerializer,
-                          PositionSerializer, StaffCreateSerializer,
-                          StaffDetailsSerializer, WorklogCreateSerializer,
-                          WorklogDetailsSerializer)
+from .serializers import (
+    ClientSerializer,
+    GroupSerializer,
+    PositionSerializer,
+    StaffCreateSerializer,
+    StaffDetailsSerializer,
+    WorklogCreateSerializer,
+    WorklogDetailsSerializer,
+)
 
 User = get_user_model()
 
@@ -26,7 +37,9 @@ User = get_user_model()
 class StaffViewSet(ModelViewSet):
     permission_classes = (StaffAccessPolicy,)
     model = User
-    queryset = User.objects.staff()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_fields = ("first_name", "last_name", "email", "position__name")
+    queryset = User.objects.all()
     serializer_class = StaffDetailsSerializer
 
     def get_serializer_class(self):
@@ -57,7 +70,17 @@ class StaffViewSet(ModelViewSet):
     )
     @action(methods=["POST"], detail=True)
     def change_password(self, request, *args, **kwargs):
-        user = request.user
+        user = self.get_object()
+        if (
+            user.id != request.user.id
+            and not request.user.groups.filter(
+                name=settings.MODERATOR_GROUP_NAME
+            ).exists()
+            and not request.user.is_superuser
+        ):  # noqa
+            raise exceptions.ValidationError(
+                detail=ErrorMessages.PERMISSIONS_DENIED, code=403
+            )
         password = request.data.get("password")
         if not password:
             raise exceptions.ValidationError(

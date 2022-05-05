@@ -30,7 +30,7 @@ class AnalyticsJobsViewSet(ListModelViewSet):
     queryset = model.objects.all()
     permission_classes = (AnalyticsAccessPolicy, )
     serializer_class = AnalyticsJobsSerializer
-    
+
     def list(self, request, *args, **kwargs):
         aggregated_jobs = []
         for _, status in self.model.STATUS:

@@ -38,7 +38,6 @@ class UserManager(UManager):
         for user in users:
             user.total_worklogs, *_ = user.worklogs.total_exp(user).values()
         return users
-            
 
 
 class User(AbstractUser):

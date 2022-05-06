@@ -60,6 +60,10 @@ class User(AbstractUser):
     def has_group(self, name):
         return self.groups.filter(name=name).count() != 0
 
+    def salary(self):
+        for worklog in self.worklogs.all():
+            pass
+
 
 class Client(models.Model):
     id = UUIDField(primary_key=True, version=4, editable=False)

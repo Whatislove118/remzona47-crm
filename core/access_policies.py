@@ -37,7 +37,9 @@ class StaffAccessPolicy(BaseAccessPolicy):
 
     @classmethod
     def scope_queryset(cls, request, qs):
-        return qs.filter(is_staff=True, is_superuser=False)
+        if request.user.groups.filter(name=settings.REGULAR_USERS_GROUP_NAME).exists():
+            qs = qs.filter(id=request.user.id)
+        return qs
 
 
 class JobAccessPolicy(BaseAccessPolicy):
@@ -132,4 +134,22 @@ class CarModelAccessPolicy(BrandAccessPolicy):
 
 
 class CarAccessPolicy(BrandAccessPolicy):
+    pass
+
+
+class BonusBalanceAccessPolicy(BaseAccessPolicy):
+    statements = [
+        {
+            "action": ["*"],
+            "principal": [f"group:{settings.MODERATOR_GROUP_NAME}", "admin"],
+            "effect": "allow",
+        },
+    ]
+
+    @classmethod
+    def scope_queryset(cls, request, qs):
+        return qs
+
+
+class BalanceHistoryAccessPolicy(BonusBalanceAccessPolicy):
     pass

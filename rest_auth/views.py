@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth import get_user_model, models
+from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as filters
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import (
@@ -50,11 +51,8 @@ class StaffViewSet(ModelViewSet):
     def get_object(self):
         if self.action == "change_password":
             user_id = serializers.UUIDField().to_internal_value(data=self.kwargs["pk"])
-            try:
-                user = self.model.objects.get(id=user_id)
-                return user
-            except self.model.DoesNotExist:
-                raise NotFound()
+            user = get_object_or_404(self.get_queryset(), id=user_id)
+            return user
         return super().get_object()
 
     @extend_schema(
@@ -89,6 +87,11 @@ class StaffViewSet(ModelViewSet):
         user.set_password(password)
         user.save()
         return Response(Messages.PASSWORD_CHANGED)
+
+    @action(methods=["GET"], detail=True)
+    def salary(self, request, *args, **kwargs):
+        user = self.get_object()
+        
 
 
 @extend_schema(tags=["clients"])

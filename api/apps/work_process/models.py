@@ -49,7 +49,13 @@ class Job(models.Model):
     started_at = models.DateTimeField(null=False, blank=False)
     ended_at = models.DateTimeField(null=False, blank=False)
 
-    client = None
+    client = models.ForeignKey(
+        "rest_auth.Client",
+        related_name="jobs",
+        null=True,
+        blank=True,
+        on_delete=models.RestrictedError,
+    )
 
     STATUS = Choices(
         "Открыта",

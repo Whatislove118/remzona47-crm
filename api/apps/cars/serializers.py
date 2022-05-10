@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from rest_auth.models import Client
 from rest_auth.serializers import ClientSerializer
 
 from .models import Brand, Car, CarModel

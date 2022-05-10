@@ -13,7 +13,6 @@ from drf_spectacular.utils import (
 )
 from rest_framework import exceptions, serializers
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from core.access_policies import ClientAccessPolicy, StaffAccessPolicy
@@ -90,8 +89,7 @@ class StaffViewSet(ModelViewSet):
 
     @action(methods=["GET"], detail=True)
     def salary(self, request, *args, **kwargs):
-        user = self.get_object()
-        
+        self.get_object()
 
 
 @extend_schema(tags=["clients"])

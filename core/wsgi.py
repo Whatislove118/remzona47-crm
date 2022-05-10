@@ -11,9 +11,10 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
+from core.startup import create_base_groups
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 application = get_wsgi_application()
 
-from core.startup import create_base_groups
 
 create_base_groups()

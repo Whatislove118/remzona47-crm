@@ -9,7 +9,12 @@ from api.apps.work_process.models import Favour, Job
 from core.access_policies import FavourAccessPolicy, JobAccessPolicy
 from core.base_views import CountMixin, ModelViewSet
 
-from .serializers import FavourSerializer, JobCreateSerializer, JobDetailsSerializer
+from .serializers import (
+    FavourCreateSerializer,
+    FavourDetailsSerializer,
+    JobCreateSerializer,
+    JobDetailsSerializer,
+)
 
 
 @extend_schema(
@@ -63,7 +68,7 @@ class JobViewSet(CountMixin, ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        user = request.user
+        user = self.request.user
         if user.has_group(name=settings.REGULAR_USERS_GROUP_NAME):
             raise serializers.ValidationError(
                 "Вы не можете назначать задачу другому человеку."
@@ -78,17 +83,11 @@ class FavourViewSet(ModelViewSet):
     queryset = Favour.objects.all()
     model = Favour
     filter_backends = (filters.DjangoFilterBackend,)
-    filterset_fields = ("name",)
+    filterset_fields = ("name", "positions__name")
     permission_classes = (FavourAccessPolicy,)
-    serializer_class = FavourSerializer
+    serializer_class = FavourDetailsSerializer
 
-    # def perform_create(self, serializer):
-    #     user = self.request.user
-    #     master_id = self.request.data.get("master")
-    #     if not master_id:
-    #         master_id = user.id
-    #     if user.has_group(name="master-regular") and master_id != user.id:
-    #         raise serializers.ValidationError(
-    #             "Вы не можете назначать задачу другому человеку."
-    #         )
-    #     serializer.save(master_id=master_id)
+    def get_serializer_class(self):
+        if self.action == "create":
+            self.serializer_class = FavourCreateSerializer
+        return super().get_serializer_class()

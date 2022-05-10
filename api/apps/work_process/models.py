@@ -6,10 +6,40 @@ from model_utils.fields import StatusField, UUIDField
 User = get_user_model()
 
 
+class FavoursPositions(models.Model):
+    id = UUIDField()
+    favour = models.ForeignKey(
+        "work_process.Favour",
+        blank=False,
+        null=False,
+        on_delete=models.RestrictedError,
+    )
+    position = models.ForeignKey(
+        "rest_auth.Position",
+        blank=False,
+        null=False,
+        on_delete=models.RestrictedError,
+    )
+
+    class Meta:
+        db_table = "favours_positions"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["favour_id", "position_id"], name="unique_favour_id_position_id"
+            )
+        ]
+
+
 class Favour(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField()
     price = models.DecimalField(max_digits=100, decimal_places=2)
+    positions = models.ManyToManyField(
+        "rest_auth.Position",
+        through="work_process.FavoursPositions",
+        related_name="favours",
+        blank=True,
+    )
 
     class Meta:
         db_table = "favours"

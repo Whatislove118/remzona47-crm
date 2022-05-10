@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework import routers
 
 from .apps.analytics.router import router as analytics_router
-from .apps.bonuses.urls import router as bonuses_router
+from .apps.bonuses.router import router as bonuses_router
 from .apps.cars.router import router as cars_router
 from .apps.work_process.router import router as jobs_router
 from .views import health

@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from api.apps.work_process.models import Favour, Job
-from rest_auth.serializers import UserDetailsSerializer
+from rest_auth.models import Position
+from rest_auth.serializers import PositionSerializer, UserDetailsSerializer
 
 
 class JobCreateSerializer(serializers.ModelSerializer):
@@ -20,8 +21,19 @@ class JobDetailsSerializer(JobCreateSerializer):
         read_only_fields = ["id", "status"]
 
 
-class FavourSerializer(serializers.ModelSerializer):
+class FavourCreateSerializer(serializers.ModelSerializer):
+    positions = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Position.objects.all()
+    )
+
     class Meta:
         model = Favour
         fields = "__all__"
         read_only_fields = ["id"]
+
+
+class FavourDetailsSerializer(FavourCreateSerializer):
+    positions = PositionSerializer(many=True, read_only=True)
+
+    class Meta(FavourCreateSerializer.Meta):
+        pass

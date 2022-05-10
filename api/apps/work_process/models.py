@@ -78,6 +78,13 @@ class Job(models.Model):
     description = models.TextField()
     started_at = models.DateTimeField(null=False, blank=False)
     ended_at = models.DateTimeField(null=False, blank=False)
+    workplace = models.ForeignKey(
+        "work_process.Workplaces",
+        related_name="jobs",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
 
     client = models.ForeignKey(
         "rest_auth.Client",
@@ -106,3 +113,31 @@ class Job(models.Model):
 
     class Meta:
         db_table = "jobs"
+
+
+class WorkplacesManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("jobs")
+
+    def available_by_jobs(self, start, end):
+        res = (
+            self.get_queryset()
+            .exclude(
+                id__in=self.get_queryset().filter(
+                    jobs__workplace_id=models.F("id"),
+                    jobs__started_at__lte=start,
+                    jobs__ended_at__gte=end,
+                )
+            )
+            .annotate(available_date_start=models.F("jobs__ended_at"))
+        )
+        return res
+
+
+class Workplaces(models.Model):
+    is_available = models.BooleanField(default=True)
+
+    objects = WorkplacesManager()
+
+    class Meta:
+        db_table = "workplaces"

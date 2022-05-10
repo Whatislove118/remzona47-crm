@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.apps.work_process.models import Favour, Job
+from api.apps.work_process.models import Favour, Job, Workplaces
 from rest_auth.models import Position
 from rest_auth.serializers import PositionSerializer, UserDetailsSerializer
 
@@ -37,3 +37,9 @@ class FavourDetailsSerializer(FavourCreateSerializer):
 
     class Meta(FavourCreateSerializer.Meta):
         pass
+
+class WorkplacesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Workplaces
+        fields = "__all__"
+        read_only_fields = ["id"]

@@ -2,18 +2,22 @@ from django.conf import settings
 from django_filters import rest_framework as filters
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
-from requests import request
 from rest_framework import serializers
 
-from api.apps.work_process.models import Favour, Job
-from core.access_policies import FavourAccessPolicy, JobAccessPolicy
-from core.base_views import CountMixin, ModelViewSet
+from api.apps.work_process.models import Favour, Job, Workplaces
+from core.access_policies import (
+    AdminAccessPolicies,
+    FavourAccessPolicy,
+    JobAccessPolicy,
+)
+from core.base_views import CountMixin, ModelViewSet, ReadOnlyModelViewSet
 
 from .serializers import (
     FavourCreateSerializer,
     FavourDetailsSerializer,
     JobCreateSerializer,
     JobDetailsSerializer,
+    WorkplacesSerializer,
 )
 
 
@@ -91,3 +95,29 @@ class FavourViewSet(ModelViewSet):
         if self.action == "create":
             self.serializer_class = FavourCreateSerializer
         return super().get_serializer_class()
+
+
+@extend_schema(tags=["workplaces"])
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter("start", OpenApiTypes.DATETIME, OpenApiParameter.QUERY),
+            OpenApiParameter("end", OpenApiTypes.DATETIME, OpenApiParameter.QUERY),
+        ],
+    ),
+)
+class WorkplacesViewSet(ModelViewSet):
+    queryset = Workplaces.objects.all()
+    model = Workplaces
+    permission_classes = (AdminAccessPolicies,)
+    serializer_class = WorkplacesSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        start = self.request.query_params.get("start", None)
+        end = self.request.query_params.get("end", None)
+        if start and end:
+            start_date = serializers.DateTimeField().to_internal_value(start)
+            end_date = serializers.DateTimeField().to_internal_value(end)
+            queryset = Workplaces.objects.available_by_jobs(start_date, end_date)
+        return queryset

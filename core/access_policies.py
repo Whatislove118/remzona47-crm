@@ -153,3 +153,17 @@ class BonusBalanceAccessPolicy(BaseAccessPolicy):
 
 class BalanceHistoryAccessPolicy(BonusBalanceAccessPolicy):
     pass
+
+
+class AdminAccessPolicies(BaseAccessPolicy):
+    statements = [
+        {
+            "action": ["*"],
+            "principal": [f"group:{settings.MODERATOR_GROUP_NAME}", "admin"],
+            "effect": "allow",
+        }
+    ]
+
+    @classmethod
+    def scope_queryset(cls, request, qs):
+        return qs

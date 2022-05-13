@@ -15,7 +15,7 @@ from rest_framework import exceptions, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from core.access_policies import ClientAccessPolicy, StaffAccessPolicy
+from core.access_policies import AdminAccessPolicies, StaffAccessPolicy
 from core.base_views import ModelViewSet
 from core.validation import ErrorMessages, Messages
 from rest_auth.models import Client, Position, Worklogs
@@ -105,7 +105,7 @@ class StaffViewSet(ModelViewSet):
 class ClientsViewSet(ModelViewSet):
     queryset = Client.objects.all()
     model = Client
-    permission_classes = (ClientAccessPolicy,)
+    permission_classes = (AdminAccessPolicies,)
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_fields = ("last_name", "phone_number")
     serializer_class = ClientSerializer
@@ -125,7 +125,7 @@ class ClientsViewSet(ModelViewSet):
 
 @extend_schema(tags=["groups"])
 class GroupViewSet(ModelViewSet):
-    permission_classes = (StaffAccessPolicy,)
+    permission_classes = (AdminAccessPolicies,)
     model = models.Group
     queryset = models.Group.objects.all()
     serializer_class = GroupSerializer
@@ -133,7 +133,7 @@ class GroupViewSet(ModelViewSet):
 
 @extend_schema(tags=["positions"])
 class PositionViewSet(ModelViewSet):
-    permission_classes = (StaffAccessPolicy,)
+    permission_classes = (AdminAccessPolicies,)
     model = Position
     queryset = Position.objects.all()
     serializer_class = PositionSerializer

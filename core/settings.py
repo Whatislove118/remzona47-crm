@@ -129,6 +129,10 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
+    # "DATETIME_INPUT_FORMATS": [
+    #     "%Y-%m-%d %H:%M",
+    # ],
+    # "DATETIME_FORMAT": "%Y-%m-%d %H:%M",
 }
 
 # DJ_REST_AUTH SETTINGS

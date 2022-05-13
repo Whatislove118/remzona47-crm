@@ -38,8 +38,11 @@ class FavourDetailsSerializer(FavourCreateSerializer):
     class Meta(FavourCreateSerializer.Meta):
         pass
 
+
 class WorkplacesSerializer(serializers.ModelSerializer):
+    available_date_ranges = serializers.ListField(required=False)
+
     class Meta:
         model = Workplaces
         fields = "__all__"
-        read_only_fields = ["id"]
+        read_only_fields = ["id", "available_date_ranges"]

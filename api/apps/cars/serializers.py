@@ -7,6 +7,8 @@ from .models import Brand, Car, CarModel
 
 
 class BrandSerializer(serializers.ModelSerializer):
+    count_models = serializers.IntegerField()
+
     class Meta:
         model = Brand
         fields = "__all__"
@@ -16,6 +18,7 @@ class BrandSerializer(serializers.ModelSerializer):
 
 
 class CarModelSerializer(serializers.ModelSerializer):
+    count_cars = serializers.IntegerField()
     brand = serializers.SlugRelatedField(
         many=False, slug_field="name", queryset=Brand.objects.all()
     )

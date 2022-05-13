@@ -31,10 +31,14 @@ from .serializers import (
 class BrandViewSet(ModelViewSet):
     model = Brand
     permission_classes = (BrandAccessPolicy,)
-    queryset = Brand.objects.all()
+    queryset = Brand.objects.prefetch_related("models")
     serializer_class = BrandSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_fields = ("name",)
+
+    def get_queryset(self):
+        queryset = self.model.objects(super().get_queryset()).with_count_models()
+        return queryset
 
 
 @extend_schema(
@@ -55,6 +59,10 @@ class CarModelViewSet(ModelViewSet):
     serializer_class = CarModelSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_fields = ("name", "brand__name")
+
+    def get_queryset(self):
+        queryset = self.model.objects(super().get_queryset()).with_count_cars()
+        return queryset
 
 
 @extend_schema(

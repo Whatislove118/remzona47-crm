@@ -10,7 +10,7 @@ from core.access_policies import (
     FavourAccessPolicy,
     JobAccessPolicy,
 )
-from core.base_views import CountMixin, ModelViewSet, ReadOnlyModelViewSet
+from core.base_views import CountMixin, ModelViewSet
 
 from .serializers import (
     FavourCreateSerializer,
@@ -72,6 +72,7 @@ class JobViewSet(CountMixin, ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
+        # TODO check overlap
         user = self.request.user
         if user.has_group(name=settings.REGULAR_USERS_GROUP_NAME):
             raise serializers.ValidationError(
@@ -121,3 +122,6 @@ class WorkplacesViewSet(ModelViewSet):
             end_date = serializers.DateTimeField().to_internal_value(end)
             queryset = Workplaces.objects.available_by_jobs(start_date, end_date)
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)

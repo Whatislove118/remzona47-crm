@@ -1,5 +1,8 @@
+from itertools import chain
+
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import Prefetch, Q
 from model_utils import Choices
 from model_utils.fields import StatusField, UUIDField
 
@@ -117,21 +120,65 @@ class Job(models.Model):
 
 class WorkplacesManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().prefetch_related("jobs")
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                Prefetch("jobs", queryset=Job.objects.order_by("started_at"))
+            )
+        )
 
     def available_by_jobs(self, start, end):
-        res = (
+        places = (
             self.get_queryset()
-            .exclude(
-                id__in=self.get_queryset().filter(
-                    jobs__workplace_id=models.F("id"),
-                    jobs__started_at__lte=start,
-                    jobs__ended_at__gte=end,
-                )
+            .filter(
+                Q(jobs__started_at__lte=end, jobs__started_at__gte=start)
+                | Q(jobs__ended_at__lte=end, jobs__ended_at__gte=start)
             )
-            .annotate(available_date_start=models.F("jobs__ended_at"))
+            .distinct()
         )
-        return res
+        for place in places:
+            copy_start, copy_end = start, end
+            result = []
+            jobs = place.jobs.all()
+            for job in jobs:
+                if overlap := self.get_overlap(
+                    job.started_at, job.ended_at, copy_start, copy_end
+                ):
+                    overlap_start, overlap_end, partial = overlap
+                    if partial is not None:
+                        if partial:
+                            copy_start = job.ended_at
+                        else:
+                            copy_end = job.started_at
+                    else:
+                        result.append((overlap_start, overlap_end))
+                        copy_start = job.ended_at
+            result.append((copy_start, copy_end))
+            place.available_date_ranges = result
+        all_places = self.get_queryset().exclude(id__in=places.values_list("id"))
+        for place in all_places:
+            if not hasattr(place, "available_date_ranges"):
+                place.available_date_ranges = [(start, end)]
+        return list(chain(places, all_places))
+
+    @staticmethod
+    def get_overlap(start, end, required_start, required_end) -> tuple | None:
+        """Method for detecting if job's start/end dates has overlap on start end from request
+
+        Returns Optional[Tuple]: if overlap is exists - return's overlaps ranges. Else - None
+        """
+        if (
+            required_start < start < required_end
+            and required_end >= end >= required_start
+        ):
+            return required_start, start, None
+        if required_start < end <= required_end:
+            return end, required_end, True
+        if required_end > start > required_start:
+            return required_start, start, False
+
+        return None
 
 
 class Workplaces(models.Model):

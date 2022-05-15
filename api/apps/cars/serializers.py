@@ -18,7 +18,7 @@ class BrandSerializer(serializers.ModelSerializer):
 
 
 class CarModelSerializer(serializers.ModelSerializer):
-    count_cars = serializers.IntegerField()
+    count_cars = serializers.IntegerField(required=False)
     brand = serializers.SlugRelatedField(
         many=False, slug_field="name", queryset=Brand.objects.all()
     )

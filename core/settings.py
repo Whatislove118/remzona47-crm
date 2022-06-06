@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     "api.apps.analytics",
     "api.apps.cars",
     "api.apps.bonuses",
+    # "api.apps.advertising",
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -264,7 +265,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CUSTOM PARAMETERS
 
-API_VERSION = os.getenv("API_VERSION", "v1")
+API_VERSION = os.getenv("API_VERSION", "v1.0")
 API_URL = "api/%s/" % API_VERSION
 MODERATOR_GROUP_NAME = os.getenv("MODERATOR_GROUP_NAME", "master-receiver")
 REGULAR_USERS_GROUP_NAME = os.getenv("REGULAR_USERS_GROUP_NAME", "master-regular")
+
+REDIS_HOST = os.getenv("REDIS_HOST", "127.0.0.1")
+REDIS_PORT = os.getenv("REDIS_PORT", 6379)
